@@ -100,6 +100,17 @@ h3 {
   padding: 18px 22px;
 }
 
+.total-stack {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.retail-card {
+  border-color: #b8c7a6;
+  background: rgba(247, 252, 238, 0.96);
+}
+
 .total-card span,
 .summary-grid span,
 label span,
@@ -460,6 +471,10 @@ td.source-cell a:hover,
 
   .total-card {
     min-width: 0;
+  }
+
+  .total-stack {
+    grid-template-columns: 1fr;
   }
 
   .weekly-review {

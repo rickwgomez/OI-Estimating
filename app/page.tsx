@@ -237,6 +237,7 @@ export default function Home() {
     (sum, item) => sum + item.qty * item.price,
     0,
   );
+  const retailCost = grandTotal * 1.25;
 
   const warnings = [
     ...gates
@@ -290,9 +291,15 @@ export default function Home() {
             <p className="eyebrow">Pacific Outdoor Fence - Salem Oregon</p>
             <h1>Wood Fencing BOM</h1>
           </div>
-          <div className="total-card">
-            <span>Estimated material total</span>
-            <strong>{currency(grandTotal)}</strong>
+          <div className="total-stack">
+            <div className="total-card">
+              <span>Estimated material total</span>
+              <strong>{currency(grandTotal)}</strong>
+            </div>
+            <div className="total-card retail-card">
+              <span>Retail Cost</span>
+              <strong>{currency(retailCost)}</strong>
+            </div>
           </div>
         </header>
 
