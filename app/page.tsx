@@ -56,7 +56,7 @@ const priceItems: PriceItem[] = [
   },
   {
     id: "staples",
-    name: "Hot-dipped galvanized collated fence staples",
+    name: "Stainless collated fence staples for fencing stapler",
     unit: "box",
     price: 48,
     source: "Estimator allowance",
