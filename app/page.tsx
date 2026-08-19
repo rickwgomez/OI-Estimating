@@ -56,7 +56,7 @@ const priceItems: PriceItem[] = [
   },
   {
     id: "staples",
-    name: "Stainless collated fence staples for fencing stapler",
+    name: "1.5 in. stainless collated fence staples for Sinco staple guns",
     unit: "box",
     price: 48,
     source: "Estimator allowance",
