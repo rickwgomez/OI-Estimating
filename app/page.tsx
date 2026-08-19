@@ -246,8 +246,8 @@ export default function Home() {
       <section className="workspace">
         <header className="topbar">
           <div>
-            <p className="eyebrow">Salem, Oregon wood fence estimator</p>
-            <h1>Residential Wood Fencing Bill of Materials</h1>
+            <p className="eyebrow">Pacific Outdoor Fence - Salem Oregon</p>
+            <h1>Wood Fencing BOM</h1>
           </div>
           <div className="total-card">
             <span>Estimated material total</span>
