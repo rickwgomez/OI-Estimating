@@ -113,6 +113,44 @@ label span,
   font-size: 2rem;
 }
 
+.weekly-review {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+  border: 1px solid #d5a75c;
+  border-radius: 8px;
+  background: #fff6df;
+  box-shadow: var(--shadow);
+  padding: 14px 16px;
+}
+
+.weekly-review div {
+  display: grid;
+  gap: 4px;
+}
+
+.weekly-review strong {
+  color: #5a3b10;
+}
+
+.weekly-review span {
+  color: #6b5a3b;
+  line-height: 1.35;
+}
+
+.weekly-review a {
+  flex: 0 0 auto;
+  border: 1px solid var(--steel);
+  border-radius: 6px;
+  background: var(--steel);
+  color: white;
+  font-weight: 700;
+  padding: 9px 12px;
+  text-decoration: none;
+}
+
 .tool-grid {
   display: grid;
   grid-template-columns: minmax(320px, 430px) minmax(0, 1fr);
@@ -422,6 +460,15 @@ td.source-cell a:hover,
 
   .total-card {
     min-width: 0;
+  }
+
+  .weekly-review {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .weekly-review a {
+    text-align: center;
   }
 
   .summary-grid,

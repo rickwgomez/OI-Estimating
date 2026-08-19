@@ -116,6 +116,7 @@ export default function Home() {
   const [prices, setPrices] = useState<Record<string, number>>(defaultPrices);
   const [checkedDates, setCheckedDates] =
     useState<Record<string, string>>(defaultCheckedDates);
+  const [showWeeklyReview, setShowWeeklyReview] = useState(false);
 
   useEffect(() => {
     const savedPrices = window.localStorage.getItem("woodFencePrices");
@@ -133,6 +134,9 @@ export default function Home() {
         ...JSON.parse(savedCheckedDates),
       });
     }
+
+    const now = new Date();
+    setShowWeeklyReview(now.getDay() === 1 && now.getHours() >= 8);
   }, []);
 
   const takeoff = useMemo(() => {
@@ -250,6 +254,19 @@ export default function Home() {
             <strong>{currency(grandTotal)}</strong>
           </div>
         </header>
+
+        {showWeeklyReview && (
+          <section className="weekly-review">
+            <div>
+              <strong>Weekly price review is due</strong>
+              <span>
+                It is Monday after 8:00 AM. Check supplier sources and update
+                unit prices before using this estimate for a quote.
+              </span>
+            </div>
+            <a href="#bill-of-materials">Review Prices</a>
+          </section>
+        )}
 
         <section className="tool-grid">
           <form className="panel controls">
@@ -435,7 +452,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="panel bom-panel">
+        <section className="panel bom-panel" id="bill-of-materials">
           <div className="panel-header">
             <h2>Bill of Materials</h2>
             <div className="source-note">
