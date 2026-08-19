@@ -397,7 +397,7 @@ button {
 
 table {
   width: 100%;
-  min-width: 1080px;
+  min-width: 1160px;
   border-collapse: collapse;
 }
 
@@ -426,6 +426,40 @@ td.price-cell input {
 .check-button {
   min-height: 34px;
   white-space: nowrap;
+  padding: 7px 10px;
+}
+
+.remove-item-button {
+  width: 34px;
+  min-height: 34px;
+  border-color: #d9aa9c;
+  background: transparent;
+  color: var(--warn);
+  padding: 0;
+}
+
+.removed-items {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+
+.removed-items h3 {
+  color: var(--muted);
+}
+
+.removed-items div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.removed-items button {
+  border-color: #c9c1b3;
+  background: #fffdf8;
+  color: var(--steel);
   padding: 7px 10px;
 }
 

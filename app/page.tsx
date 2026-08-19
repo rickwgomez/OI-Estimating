@@ -127,6 +127,7 @@ export default function Home() {
   const [prices, setPrices] = useState<Record<string, number>>(defaultPrices);
   const [checkedDates, setCheckedDates] =
     useState<Record<string, string>>(defaultCheckedDates);
+  const [removedItemIds, setRemovedItemIds] = useState<string[]>([]);
   const [showWeeklyReview, setShowWeeklyReview] = useState(false);
 
   useEffect(() => {
@@ -136,6 +137,9 @@ export default function Home() {
     );
     const savedPriceDataVersion = window.localStorage.getItem(
       "woodFencePriceDataVersion",
+    );
+    const savedRemovedItemIds = window.localStorage.getItem(
+      "woodFenceRemovedItemIds",
     );
 
     if (savedPrices) {
@@ -162,6 +166,10 @@ export default function Home() {
         ...defaultCheckedDates,
         ...JSON.parse(savedCheckedDates),
       });
+    }
+
+    if (savedRemovedItemIds) {
+      setRemovedItemIds(JSON.parse(savedRemovedItemIds));
     }
 
     const now = new Date();
@@ -231,7 +239,10 @@ export default function Home() {
       qty: quantities[item.id] || 0,
       price: prices[item.id] ?? item.price,
     }))
-    .filter((item) => item.qty > 0);
+    .filter((item) => item.qty > 0 && !removedItemIds.includes(item.id));
+  const removedItems = priceItems.filter((item) =>
+    removedItemIds.includes(item.id),
+  );
 
   const grandTotal = lineItems.reduce(
     (sum, item) => sum + item.qty * item.price,
@@ -274,6 +285,18 @@ export default function Home() {
     window.open(item.url, "_blank", "noopener,noreferrer");
   }
 
+  function removeBomItem(id: string) {
+    const next = Array.from(new Set([...removedItemIds, id]));
+    setRemovedItemIds(next);
+    window.localStorage.setItem("woodFenceRemovedItemIds", JSON.stringify(next));
+  }
+
+  function restoreBomItem(id: string) {
+    const next = removedItemIds.filter((itemId) => itemId !== id);
+    setRemovedItemIds(next);
+    window.localStorage.setItem("woodFenceRemovedItemIds", JSON.stringify(next));
+  }
+
   function resetInputs() {
     setLengthFt(120);
     setHeightFt(6);
@@ -281,6 +304,8 @@ export default function Home() {
     setCornerCount(4);
     setWastePct(5);
     setGates([{ type: "single", width: 42 }]);
+    setRemovedItemIds([]);
+    window.localStorage.removeItem("woodFenceRemovedItemIds");
   }
 
   return (
@@ -552,6 +577,7 @@ export default function Home() {
                   <th>Last Checked</th>
                   <th>Update</th>
                   <th>Line Total</th>
+                  <th>Remove</th>
                 </tr>
               </thead>
               <tbody>
@@ -588,11 +614,37 @@ export default function Home() {
                       </button>
                     </td>
                     <td>{currency(item.qty * item.price)}</td>
+                    <td>
+                      <button
+                        aria-label={`Remove ${item.name} from bill of materials`}
+                        className="remove-item-button"
+                        type="button"
+                        onClick={() => removeBomItem(item.id)}
+                      >
+                        X
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
+          {removedItems.length > 0 && (
+            <div className="removed-items">
+              <h3>Removed Items</h3>
+              <div>
+                {removedItems.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => restoreBomItem(item.id)}
+                  >
+                    Restore {item.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </section>
 
         <section className="panel pricing-panel">
