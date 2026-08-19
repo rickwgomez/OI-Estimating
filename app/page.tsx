@@ -1,0 +1,472 @@
+"use client";
+
+import { useMemo, useState } from "react";
+
+type Gate = { width: number };
+
+type PriceItem = {
+  id: string;
+  name: string;
+  unit: string;
+  price: number;
+  source: string;
+  url: string;
+};
+
+const priceItems: PriceItem[] = [
+  {
+    id: "picket",
+    name: "5/8 in. x 5-1/2 in. x 6 ft cedar dog-ear picket",
+    unit: "each",
+    price: 4.18,
+    source: "Home Depot",
+    url: "https://www.homedepot.com/b/Lumber-Composites-Fencing-Gates-Wood-Fencing-Wood-Fence-Pickets/Alta-Forest-Products/Cedar/Dog-Eared/N-5yc1vZc3moZel2Z1z19wkoZ1z1v1zz",
+  },
+  {
+    id: "post",
+    name: "4x4x8 ground-contact pressure-treated post",
+    unit: "each",
+    price: 16.37,
+    source: "Retail benchmark",
+    url: "https://www.boltmaxx.com/product/4-in-x-4-in-x-8-ft-ground-contact-pressure-treated-post/",
+  },
+  {
+    id: "rail",
+    name: "2x4x8 kiln-dried rail lumber",
+    unit: "each",
+    price: 6.75,
+    source: "2026 retail range midpoint",
+    url: "https://constructmath.com/fence-calculator",
+  },
+  {
+    id: "bracket",
+    name: "Simpson Strong-Tie FB24Z 2x4 fence rail bracket",
+    unit: "each",
+    price: 0.98,
+    source: "Home Depot",
+    url: "https://www.homedepot.com/p/100375311",
+  },
+  {
+    id: "concrete",
+    name: "60 lb fast-setting concrete mix",
+    unit: "bag",
+    price: 6.98,
+    source: "2026 retail range midpoint",
+    url: "https://constructmath.com/fence-calculator",
+  },
+  {
+    id: "staples",
+    name: "Hot-dipped galvanized collated fence staples",
+    unit: "box",
+    price: 48,
+    source: "Estimator allowance",
+    url: "https://www.homedepot.com/p/318183027",
+  },
+  {
+    id: "screws",
+    name: "Exterior connector screws or galvanized nails",
+    unit: "box",
+    price: 18,
+    source: "Estimator allowance",
+    url: "https://www.capitallumber.co/products/fencing",
+  },
+  {
+    id: "gateHardware",
+    name: "Typical gate hinge and latch set",
+    unit: "set",
+    price: 26.37,
+    source: "Home Depot",
+    url: "https://www.homedepot.com/p/327599432",
+  },
+  {
+    id: "antiSag",
+    name: "Anti-sag gate brace kit",
+    unit: "kit",
+    price: 11.47,
+    source: "Home Depot benchmark",
+    url: "https://www.gardenista.com/brand/everbilt/",
+  },
+];
+
+const defaultPrices = Object.fromEntries(
+  priceItems.map((item) => [item.id, item.price]),
+) as Record<string, number>;
+
+function currency(value: number) {
+  return value.toLocaleString("en-US", {
+    style: "currency",
+    currency: "USD",
+  });
+}
+
+function cleanNumber(value: number) {
+  return Number.isFinite(value) ? value : 0;
+}
+
+export default function Home() {
+  const [lengthFt, setLengthFt] = useState(120);
+  const [heightFt, setHeightFt] = useState(6);
+  const [postSpacingFt, setPostSpacingFt] = useState(8);
+  const [wastePct, setWastePct] = useState(5);
+  const [gates, setGates] = useState<Gate[]>([{ width: 42 }]);
+  const [prices, setPrices] = useState<Record<string, number>>(defaultPrices);
+
+  const takeoff = useMemo(() => {
+    const safeSpacing = Math.min(8, Math.max(4, cleanNumber(postSpacingFt)));
+    const gateOpeningsFt = gates.reduce((sum, gate) => sum + gate.width / 12, 0);
+    const boardFenceFt = Math.max(0, lengthFt - gateOpeningsFt);
+    const railRows = heightFt >= 6 ? 3 : 2;
+    const fenceBays = Math.max(1, Math.ceil(boardFenceFt / safeSpacing));
+    const fencePosts = boardFenceFt > 0 ? fenceBays + 1 : 0;
+    const posts = fencePosts + gates.length * 2;
+    const fencePickets = Math.ceil((boardFenceFt * 12) / 5.5);
+    const gatePickets = gates.reduce(
+      (sum, gate) => sum + Math.ceil(gate.width / 5.5),
+      0,
+    );
+    const pickets = Math.ceil(
+      (fencePickets + gatePickets) * (1 + wastePct / 100),
+    );
+    const rails = Math.ceil((boardFenceFt * railRows) / 8) + gates.length * 3;
+    const brackets = fenceBays * railRows * 2;
+    const concrete = posts * 2;
+    const stapleCount = Math.ceil(
+      (fencePickets + gatePickets) * railRows * 2 * 1.1,
+    );
+
+    return {
+      boardFenceFt,
+      railRows,
+      pickets,
+      posts,
+      rails,
+      brackets,
+      concrete,
+      stapleBoxes: Math.max(1, Math.ceil(stapleCount / 1000)),
+      screwBoxes: Math.max(1, Math.ceil((brackets * 6 + gates.length * 40) / 350)),
+      gateHardware: gates.length,
+      antiSag: gates.length,
+    };
+  }, [gates, heightFt, lengthFt, postSpacingFt, wastePct]);
+
+  const quantities: Record<string, number> = {
+    picket: takeoff.pickets,
+    post: takeoff.posts,
+    rail: takeoff.rails,
+    bracket: takeoff.brackets,
+    concrete: takeoff.concrete,
+    staples: takeoff.stapleBoxes,
+    screws: takeoff.screwBoxes,
+    gateHardware: takeoff.gateHardware,
+    antiSag: takeoff.antiSag,
+  };
+
+  const lineItems = priceItems
+    .map((item) => ({
+      ...item,
+      qty: quantities[item.id] || 0,
+      price: prices[item.id] ?? item.price,
+    }))
+    .filter((item) => item.qty > 0);
+
+  const grandTotal = lineItems.reduce(
+    (sum, item) => sum + item.qty * item.price,
+    0,
+  );
+
+  const warnings = [
+    ...gates
+      .map((gate, index) =>
+        gate.width > 45
+          ? `Gate ${index + 1} is ${gate.width} in. wide. Standard wood gates should not exceed 45 in.; split this opening into double gates or revise the width.`
+          : "",
+      )
+      .filter(Boolean),
+    lengthFt <= 0
+      ? "Enter a fence length greater than zero to produce a material takeoff."
+      : "",
+    takeoff.boardFenceFt === 0 && gates.length > 0
+      ? "Gate openings equal or exceed the fence length. Check whether total fence length includes gate openings."
+      : "",
+  ].filter(Boolean);
+
+  function updatePrice(id: string, price: number) {
+    setPrices({ ...prices, [id]: Math.max(0, cleanNumber(price)) });
+  }
+
+  function resetInputs() {
+    setLengthFt(120);
+    setHeightFt(6);
+    setPostSpacingFt(8);
+    setWastePct(5);
+    setGates([{ width: 42 }]);
+  }
+
+  return (
+    <main className="app-shell">
+      <section className="workspace">
+        <header className="topbar">
+          <div>
+            <p className="eyebrow">Salem, Oregon wood fence estimator</p>
+            <h1>Residential Wood Fencing Bill of Materials</h1>
+          </div>
+          <div className="total-card">
+            <span>Estimated material total</span>
+            <strong>{currency(grandTotal)}</strong>
+          </div>
+        </header>
+
+        <section className="tool-grid">
+          <form className="panel controls">
+            <div className="panel-header">
+              <h2>Project Inputs</h2>
+              <button type="button" className="ghost-button" onClick={resetInputs}>
+                Reset
+              </button>
+            </div>
+
+            <label>
+              <span>Total fence line length</span>
+              <div className="input-row">
+                <input
+                  min="1"
+                  step="1"
+                  type="number"
+                  value={lengthFt}
+                  onChange={(event) => setLengthFt(Number(event.target.value))}
+                />
+                <span>ft</span>
+              </div>
+            </label>
+
+            <label>
+              <span>Fence height</span>
+              <select
+                value={heightFt}
+                onChange={(event) => setHeightFt(Number(event.target.value))}
+              >
+                <option value="4">4 ft</option>
+                <option value="5">5 ft</option>
+                <option value="6">6 ft</option>
+              </select>
+            </label>
+
+            <label>
+              <span>Post spacing</span>
+              <div className="input-row">
+                <input
+                  max="8"
+                  min="4"
+                  step="0.5"
+                  type="number"
+                  value={postSpacingFt}
+                  onChange={(event) => setPostSpacingFt(Number(event.target.value))}
+                />
+                <span>ft max</span>
+              </div>
+            </label>
+
+            <label>
+              <span>Board waste factor</span>
+              <div className="input-row">
+                <input
+                  max="25"
+                  min="0"
+                  step="1"
+                  type="number"
+                  value={wastePct}
+                  onChange={(event) => setWastePct(Number(event.target.value))}
+                />
+                <span>%</span>
+              </div>
+            </label>
+
+            <div className="gate-block">
+              <div className="gate-title">
+                <h3>Gates</h3>
+                <button
+                  type="button"
+                  onClick={() => setGates([...gates, { width: 42 }])}
+                >
+                  Add Gate
+                </button>
+              </div>
+              {gates.map((gate, index) => (
+                <div className="gate-row" key={`${index}-${gates.length}`}>
+                  <span>Gate {index + 1}</span>
+                  <input
+                    aria-label={`Gate ${index + 1} width in inches`}
+                    min="1"
+                    step="1"
+                    type="number"
+                    value={gate.width}
+                    onChange={(event) => {
+                      const next = [...gates];
+                      next[index] = { width: Number(event.target.value) };
+                      setGates(next);
+                    }}
+                  />
+                  <span>in.</span>
+                  <button
+                    aria-label={`Remove gate ${index + 1}`}
+                    className="remove-gate"
+                    type="button"
+                    onClick={() =>
+                      setGates(gates.filter((_, gateIndex) => gateIndex !== index))
+                    }
+                  >
+                    x
+                  </button>
+                </div>
+              ))}
+            </div>
+          </form>
+
+          <section className="panel overview">
+            <div className="panel-header">
+              <h2>Takeoff Summary</h2>
+              <button
+                type="button"
+                className="ghost-button"
+                onClick={() => window.print()}
+              >
+                Print
+              </button>
+            </div>
+            <div className="fence-diagram" aria-label="Fence layout visualization">
+              <div className="rail rail-top" />
+              <div className="rail rail-mid" />
+              <div className="rail rail-bottom" />
+              {Array.from({ length: 32 }).map((_, index) => (
+                <span className="picket" key={index} />
+              ))}
+              {gates.map((gate, index) => (
+                <div
+                  className={gate.width > 45 ? "gate gate-warning" : "gate"}
+                  key={`gate-preview-${index}`}
+                  style={{ right: `${18 + index * 88}px` }}
+                >
+                  <span />
+                </div>
+              ))}
+            </div>
+            <div className="summary-grid">
+              <div>
+                <span>Fence boards</span>
+                <strong>{takeoff.pickets}</strong>
+              </div>
+              <div>
+                <span>Posts</span>
+                <strong>{takeoff.posts}</strong>
+              </div>
+              <div>
+                <span>2x4 rails</span>
+                <strong>{takeoff.rails}</strong>
+              </div>
+              <div>
+                <span>Rail brackets</span>
+                <strong>{takeoff.brackets}</strong>
+              </div>
+            </div>
+            <div className="warnings">
+              {warnings.map((warning) => (
+                <div className="warning" key={warning}>
+                  {warning}
+                </div>
+              ))}
+            </div>
+          </section>
+        </section>
+
+        <section className="panel assumptions">
+          <h2>Build Assumptions</h2>
+          <div className="assumption-grid">
+            <p>
+              Boards are estimated as 5/8 in. x 5-1/2 in. dog-ear pickets with
+              5.5 in. coverage per board.
+            </p>
+            <p>
+              Posts are 4x4x8 ground-contact pressure-treated posts set with
+              two 60 lb concrete bags each.
+            </p>
+            <p>
+              Rails are kiln-dried 2x4x8 boards: two rails for 4-5 ft fence,
+              three rails for 6 ft fence.
+            </p>
+            <p>
+              Rails use two brackets per rail bay. Gate hardware is counted per
+              gate with hinge/latch set and anti-sag bracing.
+            </p>
+          </div>
+        </section>
+
+        <section className="panel bom-panel">
+          <div className="panel-header">
+            <h2>Bill of Materials</h2>
+            <div className="source-note">
+              Default prices are editable and source-linked for Salem-area buying.
+            </div>
+          </div>
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Qty</th>
+                  <th>Unit</th>
+                  <th>Unit Price</th>
+                  <th>Source</th>
+                  <th>Line Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {lineItems.map((item) => (
+                  <tr key={item.id}>
+                    <td>{item.name}</td>
+                    <td>{item.qty}</td>
+                    <td>{item.unit}</td>
+                    <td className="price-cell">
+                      <input
+                        aria-label={`${item.name} unit price`}
+                        min="0"
+                        step="0.01"
+                        type="number"
+                        value={item.price}
+                        onChange={(event) =>
+                          updatePrice(item.id, Number(event.target.value))
+                        }
+                      />
+                    </td>
+                    <td className="source-cell">
+                      <a href={item.url} rel="noreferrer" target="_blank">
+                        {item.source}
+                      </a>
+                    </td>
+                    <td>{currency(item.qty * item.price)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section className="panel pricing-panel">
+          <h2>Pricing Sources</h2>
+          <p className="pricing-copy">
+            Prices were sourced on 2026-08-19 where retailers exposed product
+            pricing. Salem lumberyard items are included as quote-ready local
+            sources when live unit pricing is not published.
+          </p>
+          <div className="source-list">
+            <a href="https://www.homedepot.com/b/Lumber-Composites-Fencing-Gates-Wood-Fencing-Wood-Fence-Pickets/Line/Cedar/Dog-Eared/N-5yc1vZc3moZ1z1977wZ1z19wkoZ1z1v1zz" rel="noreferrer" target="_blank">Home Depot cedar pickets</a>
+            <a href="https://www.homedepot.com/p/100375311" rel="noreferrer" target="_blank">Simpson FB24Z rail brackets</a>
+            <a href="https://www.homedepot.com/p/327599432" rel="noreferrer" target="_blank">Typical hinge and latch set</a>
+            <a href="https://parr.com/locations/salem-oregon-lumber/" rel="noreferrer" target="_blank">PARR Lumber Salem</a>
+            <a href="https://www.capitallumber.co/products/fencing" rel="noreferrer" target="_blank">Capital Lumber fencing stock</a>
+            <a href="https://www.lowes.com/store/OR-Salem/1600" rel="noreferrer" target="_blank">Lowe&apos;s Salem store</a>
+          </div>
+        </section>
+      </section>
+    </main>
+  );
+}
