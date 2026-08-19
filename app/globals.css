@@ -226,7 +226,7 @@ button {
 
 .gate-row {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  grid-template-columns: auto minmax(130px, 0.75fr) minmax(0, 1fr) auto auto;
   align-items: center;
   gap: 8px;
   margin-bottom: 10px;
@@ -496,7 +496,7 @@ td.source-cell a:hover,
   }
 
   .gate-row {
-    grid-template-columns: 1fr 1fr auto;
+    grid-template-columns: 1fr 1fr auto auto;
   }
 
   .gate-row span {

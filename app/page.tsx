@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-type Gate = { width: number };
+type Gate = { type: "single" | "double"; width: number };
 
 type PriceItem = {
   id: string;
@@ -86,6 +86,14 @@ const priceItems: PriceItem[] = [
     source: "Home Depot benchmark",
     url: "https://www.gardenista.com/brand/everbilt/",
   },
+  {
+    id: "dropRod",
+    name: "Drop rod / cane bolt for double drive gate",
+    unit: "each",
+    price: 18,
+    source: "Estimator allowance",
+    url: "https://www.capitallumber.co/products/fencing",
+  },
 ];
 
 const defaultPrices = Object.fromEntries(
@@ -111,8 +119,9 @@ export default function Home() {
   const [lengthFt, setLengthFt] = useState(120);
   const [heightFt, setHeightFt] = useState(6);
   const [postSpacingFt, setPostSpacingFt] = useState(8);
+  const [cornerCount, setCornerCount] = useState(4);
   const [wastePct, setWastePct] = useState(5);
-  const [gates, setGates] = useState<Gate[]>([{ width: 42 }]);
+  const [gates, setGates] = useState<Gate[]>([{ type: "single", width: 42 }]);
   const [prices, setPrices] = useState<Record<string, number>>(defaultPrices);
   const [checkedDates, setCheckedDates] =
     useState<Record<string, string>>(defaultCheckedDates);
@@ -146,7 +155,12 @@ export default function Home() {
     const railRows = heightFt >= 6 ? 3 : 2;
     const fenceBays = Math.max(1, Math.ceil(boardFenceFt / safeSpacing));
     const fencePosts = boardFenceFt > 0 ? fenceBays + 1 : 0;
-    const posts = fencePosts + gates.length * 2;
+    const gateLeaves = gates.reduce(
+      (sum, gate) => sum + (gate.type === "double" ? 2 : 1),
+      0,
+    );
+    const doubleGateCount = gates.filter((gate) => gate.type === "double").length;
+    const posts = fencePosts + gates.length * 2 + Math.max(0, cornerCount);
     const fencePickets = Math.ceil((boardFenceFt * 12) / 5.5);
     const gatePickets = gates.reduce(
       (sum, gate) => sum + Math.ceil(gate.width / 5.5),
@@ -155,7 +169,7 @@ export default function Home() {
     const pickets = Math.ceil(
       (fencePickets + gatePickets) * (1 + wastePct / 100),
     );
-    const rails = Math.ceil((boardFenceFt * railRows) / 8) + gates.length * 3;
+    const rails = Math.ceil((boardFenceFt * railRows) / 8) + gateLeaves * 3;
     const brackets = fenceBays * railRows * 2;
     const concrete = posts * 2;
     const stapleCount = Math.ceil(
@@ -171,11 +185,12 @@ export default function Home() {
       brackets,
       concrete,
       stapleBoxes: Math.max(1, Math.ceil(stapleCount / 1000)),
-      screwBoxes: Math.max(1, Math.ceil((brackets * 6 + gates.length * 40) / 350)),
-      gateHardware: gates.length,
-      antiSag: gates.length,
+      screwBoxes: Math.max(1, Math.ceil((brackets * 6 + gateLeaves * 40) / 350)),
+      gateHardware: gateLeaves,
+      antiSag: gateLeaves,
+      dropRod: doubleGateCount,
     };
-  }, [gates, heightFt, lengthFt, postSpacingFt, wastePct]);
+  }, [cornerCount, gates, heightFt, lengthFt, postSpacingFt, wastePct]);
 
   const quantities: Record<string, number> = {
     picket: takeoff.pickets,
@@ -187,6 +202,7 @@ export default function Home() {
     screws: takeoff.screwBoxes,
     gateHardware: takeoff.gateHardware,
     antiSag: takeoff.antiSag,
+    dropRod: takeoff.dropRod,
   };
 
   const lineItems = priceItems
@@ -204,11 +220,15 @@ export default function Home() {
 
   const warnings = [
     ...gates
-      .map((gate, index) =>
-        gate.width > 45
-          ? `Gate ${index + 1} is ${gate.width} in. wide. Standard wood gates should not exceed 45 in.; split this opening into double gates or revise the width.`
-          : "",
-      )
+      .map((gate, index) => {
+        const leafWidth = gate.type === "double" ? gate.width / 2 : gate.width;
+
+        if (leafWidth <= 48) return "";
+
+        return gate.type === "double"
+          ? `Gate ${index + 1} has ${leafWidth.toFixed(1)} in. leaves. Double drive gate leaves should not exceed 48 in. each; reduce the opening or revise the gate plan.`
+          : `Gate ${index + 1} is ${gate.width} in. wide. Single swing gates should not exceed 48 in.; switch to double drive or revise the width.`;
+      })
       .filter(Boolean),
     lengthFt <= 0
       ? "Enter a fence length greater than zero to produce a material takeoff."
@@ -237,8 +257,9 @@ export default function Home() {
     setLengthFt(120);
     setHeightFt(6);
     setPostSpacingFt(8);
+    setCornerCount(4);
     setWastePct(5);
-    setGates([{ width: 42 }]);
+    setGates([{ type: "single", width: 42 }]);
   }
 
   return (
@@ -319,6 +340,20 @@ export default function Home() {
             </label>
 
             <label>
+              <span>Number of corners</span>
+              <div className="input-row">
+                <input
+                  min="0"
+                  step="1"
+                  type="number"
+                  value={cornerCount}
+                  onChange={(event) => setCornerCount(Number(event.target.value))}
+                />
+                <span>posts</span>
+              </div>
+            </label>
+
+            <label>
               <span>Board waste factor</span>
               <div className="input-row">
                 <input
@@ -338,7 +373,7 @@ export default function Home() {
                 <h3>Gates</h3>
                 <button
                   type="button"
-                  onClick={() => setGates([...gates, { width: 42 }])}
+                  onClick={() => setGates([...gates, { type: "single", width: 42 }])}
                 >
                   Add Gate
                 </button>
@@ -346,15 +381,30 @@ export default function Home() {
               {gates.map((gate, index) => (
                 <div className="gate-row" key={`${index}-${gates.length}`}>
                   <span>Gate {index + 1}</span>
+                  <select
+                    aria-label={`Gate ${index + 1} type`}
+                    value={gate.type}
+                    onChange={(event) => {
+                      const next = [...gates];
+                      next[index] = {
+                        ...gate,
+                        type: event.target.value as Gate["type"],
+                      };
+                      setGates(next);
+                    }}
+                  >
+                    <option value="single">Single swing</option>
+                    <option value="double">Double drive</option>
+                  </select>
                   <input
-                    aria-label={`Gate ${index + 1} width in inches`}
+                    aria-label={`Gate ${index + 1} opening width in inches`}
                     min="1"
                     step="1"
                     type="number"
                     value={gate.width}
                     onChange={(event) => {
                       const next = [...gates];
-                      next[index] = { width: Number(event.target.value) };
+                      next[index] = { ...gate, width: Number(event.target.value) };
                       setGates(next);
                     }}
                   />
@@ -394,7 +444,11 @@ export default function Home() {
               ))}
               {gates.map((gate, index) => (
                 <div
-                  className={gate.width > 45 ? "gate gate-warning" : "gate"}
+                  className={
+                    (gate.type === "double" ? gate.width / 2 : gate.width) > 48
+                      ? "gate gate-warning"
+                      : "gate"
+                  }
                   key={`gate-preview-${index}`}
                   style={{ right: `${18 + index * 88}px` }}
                 >
@@ -446,8 +500,8 @@ export default function Home() {
               three rails for 6 ft fence.
             </p>
             <p>
-              Rails use two brackets per rail bay. Gate hardware is counted per
-              gate with hinge/latch set and anti-sag bracing.
+              Corner input adds dedicated corner posts. Single swing gate leaves
+              max at 48 in.; double drive leaves are checked at half the opening.
             </p>
           </div>
         </section>
