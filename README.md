@@ -12,7 +12,7 @@ Open `index.html` in a browser to use it. No install or build step is required.
 - Posts: 4x4x8 ground-contact pressure-treated posts.
 - Rails: 2x4x8 kiln-dried rails; 2 rails for 4-5 ft fence and 3 rails for 6 ft fence.
 - Rails use Simpson FB24Z-style rail brackets.
-- Concrete: 2 bags of 60 lb fast-setting mix per post.
+- Concrete: 2 bags of fast-setting mix per post.
 - Gate width warning starts above 45 in.
 - Gate material includes pickets, 2x4 gate frame allowance, hinge/latch set, and anti-sag brace kit.
 - Staple and connector fastener quantities are estimated allowances.

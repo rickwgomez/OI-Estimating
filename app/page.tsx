@@ -32,11 +32,11 @@ const priceItems: PriceItem[] = [
   },
   {
     id: "rail",
-    name: "2x4x8 kiln-dried rail lumber",
+    name: "2 in. x 4 in. x 96 in. #2 Premium Grade KD-HT rail lumber",
     unit: "each",
-    price: 6.75,
-    source: "2026 retail range midpoint",
-    url: "https://constructmath.com/fence-calculator",
+    price: 4.15,
+    source: "Home Depot",
+    url: "https://www.homedepot.com/b/Lumber-Composites-Dimensional-Lumber/2x4/8-ft/2-in/N-5yc1vZc3tcZ1z0ywxvZ1z1rkqlZ1z1soke",
   },
   {
     id: "bracket",
@@ -48,11 +48,11 @@ const priceItems: PriceItem[] = [
   },
   {
     id: "concrete",
-    name: "60 lb fast-setting concrete mix",
+    name: "Sakrete 50-lb fast-setting concrete mix",
     unit: "bag",
-    price: 6.98,
-    source: "2026 retail range midpoint",
-    url: "https://constructmath.com/fence-calculator",
+    price: 7.17,
+    source: "Lowe's Salem",
+    url: "https://www.doordash.com/convenience/store/lowe%27s-salem-28012592/",
   },
   {
     id: "staples",
@@ -104,6 +104,8 @@ const defaultCheckedDates = Object.fromEntries(
   priceItems.map((item) => [item.id, "2026-08-19"]),
 ) as Record<string, string>;
 
+const priceDataVersion = "2026-08-19-rail-concrete-retail-sources";
+
 function currency(value: number) {
   return value.toLocaleString("en-US", {
     style: "currency",
@@ -132,9 +134,26 @@ export default function Home() {
     const savedCheckedDates = window.localStorage.getItem(
       "woodFenceCheckedDates",
     );
+    const savedPriceDataVersion = window.localStorage.getItem(
+      "woodFencePriceDataVersion",
+    );
 
     if (savedPrices) {
-      setPrices({ ...defaultPrices, ...JSON.parse(savedPrices) });
+      const nextPrices = { ...defaultPrices, ...JSON.parse(savedPrices) };
+
+      if (savedPriceDataVersion !== priceDataVersion) {
+        nextPrices.rail = defaultPrices.rail;
+        nextPrices.concrete = defaultPrices.concrete;
+        window.localStorage.setItem(
+          "woodFencePriceDataVersion",
+          priceDataVersion,
+        );
+        window.localStorage.setItem("woodFencePrices", JSON.stringify(nextPrices));
+      }
+
+      setPrices(nextPrices);
+    } else {
+      window.localStorage.setItem("woodFencePriceDataVersion", priceDataVersion);
     }
 
     if (savedCheckedDates) {
@@ -493,7 +512,7 @@ export default function Home() {
             </p>
             <p>
               Posts are 4x4x8 ground-contact pressure-treated posts set with
-              two 60 lb concrete bags each.
+              two fast-setting concrete bags each.
             </p>
             <p>
               Rails are kiln-dried 2x4x8 boards: two rails for 4-5 ft fence,
