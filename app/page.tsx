@@ -52,7 +52,7 @@ const priceItems: PriceItem[] = [
     unit: "bag",
     price: 7.17,
     source: "Lowe's Salem",
-    url: "https://www.doordash.com/convenience/store/lowe%27s-salem-28012592/",
+    url: "https://www.lowes.com/pd/Sakrete-50-Pound-s-Fast-setting-Concrete-mix/3338802",
   },
   {
     id: "staples",
