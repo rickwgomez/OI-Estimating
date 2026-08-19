@@ -24,11 +24,11 @@ const priceItems: PriceItem[] = [
   },
   {
     id: "post",
-    name: "4x4x8 ground-contact pressure-treated post",
+    name: "4 in. x 4 in. x 8 ft. #2 ground-contact pressure-treated post",
     unit: "each",
-    price: 16.37,
-    source: "Retail benchmark",
-    url: "https://www.boltmaxx.com/product/4-in-x-4-in-x-8-ft-ground-contact-pressure-treated-post/",
+    price: 10.18,
+    source: "Home Depot",
+    url: "https://www.homedepot.com/p/205220341",
   },
   {
     id: "rail",
@@ -104,7 +104,7 @@ const defaultCheckedDates = Object.fromEntries(
   priceItems.map((item) => [item.id, "2026-08-19"]),
 ) as Record<string, string>;
 
-const priceDataVersion = "2026-08-19-rail-concrete-retail-sources";
+const priceDataVersion = "2026-08-19-post-rail-concrete-retail-sources";
 
 function currency(value: number) {
   return value.toLocaleString("en-US", {
@@ -142,6 +142,7 @@ export default function Home() {
       const nextPrices = { ...defaultPrices, ...JSON.parse(savedPrices) };
 
       if (savedPriceDataVersion !== priceDataVersion) {
+        nextPrices.post = defaultPrices.post;
         nextPrices.rail = defaultPrices.rail;
         nextPrices.concrete = defaultPrices.concrete;
         window.localStorage.setItem(

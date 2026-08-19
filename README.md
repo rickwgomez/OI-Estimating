@@ -9,7 +9,7 @@ Open `index.html` in a browser to use it. No install or build step is required.
 - Fence height: 4 ft, 5 ft, or 6 ft.
 - Standard maximum post spacing: 8 ft.
 - Boards: 5/8 in. x 5-1/2 in. dog-ear pickets with 5.5 in. coverage.
-- Posts: 4x4x8 ground-contact pressure-treated posts.
+- Posts: 4x4x8 #2 ground-contact pressure-treated posts.
 - Rails: 2x4x8 kiln-dried rails; 2 rails for 4-5 ft fence and 3 rails for 6 ft fence.
 - Rails use Simpson FB24Z-style rail brackets.
 - Concrete: 2 bags of fast-setting mix per post.
