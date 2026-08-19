@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type Gate = { width: number };
 
@@ -92,6 +92,10 @@ const defaultPrices = Object.fromEntries(
   priceItems.map((item) => [item.id, item.price]),
 ) as Record<string, number>;
 
+const defaultCheckedDates = Object.fromEntries(
+  priceItems.map((item) => [item.id, "2026-08-19"]),
+) as Record<string, string>;
+
 function currency(value: number) {
   return value.toLocaleString("en-US", {
     style: "currency",
@@ -110,6 +114,26 @@ export default function Home() {
   const [wastePct, setWastePct] = useState(5);
   const [gates, setGates] = useState<Gate[]>([{ width: 42 }]);
   const [prices, setPrices] = useState<Record<string, number>>(defaultPrices);
+  const [checkedDates, setCheckedDates] =
+    useState<Record<string, string>>(defaultCheckedDates);
+
+  useEffect(() => {
+    const savedPrices = window.localStorage.getItem("woodFencePrices");
+    const savedCheckedDates = window.localStorage.getItem(
+      "woodFenceCheckedDates",
+    );
+
+    if (savedPrices) {
+      setPrices({ ...defaultPrices, ...JSON.parse(savedPrices) });
+    }
+
+    if (savedCheckedDates) {
+      setCheckedDates({
+        ...defaultCheckedDates,
+        ...JSON.parse(savedCheckedDates),
+      });
+    }
+  }, []);
 
   const takeoff = useMemo(() => {
     const safeSpacing = Math.min(8, Math.max(4, cleanNumber(postSpacingFt)));
@@ -191,7 +215,18 @@ export default function Home() {
   ].filter(Boolean);
 
   function updatePrice(id: string, price: number) {
-    setPrices({ ...prices, [id]: Math.max(0, cleanNumber(price)) });
+    const next = { ...prices, [id]: Math.max(0, cleanNumber(price)) };
+    setPrices(next);
+    window.localStorage.setItem("woodFencePrices", JSON.stringify(next));
+  }
+
+  function checkSource(item: PriceItem) {
+    const today = new Date().toLocaleDateString("en-CA");
+    const next = { ...checkedDates, [item.id]: today };
+
+    setCheckedDates(next);
+    window.localStorage.setItem("woodFenceCheckedDates", JSON.stringify(next));
+    window.open(item.url, "_blank", "noopener,noreferrer");
   }
 
   function resetInputs() {
@@ -404,7 +439,7 @@ export default function Home() {
           <div className="panel-header">
             <h2>Bill of Materials</h2>
             <div className="source-note">
-              Default prices are editable and source-linked for Salem-area buying.
+              Use Check Source to refresh a quote, then edit the unit price.
             </div>
           </div>
           <div className="table-wrap">
@@ -416,6 +451,8 @@ export default function Home() {
                   <th>Unit</th>
                   <th>Unit Price</th>
                   <th>Source</th>
+                  <th>Last Checked</th>
+                  <th>Update</th>
                   <th>Line Total</th>
                 </tr>
               </thead>
@@ -442,6 +479,16 @@ export default function Home() {
                         {item.source}
                       </a>
                     </td>
+                    <td>{checkedDates[item.id] || "Not checked"}</td>
+                    <td>
+                      <button
+                        className="check-button"
+                        type="button"
+                        onClick={() => checkSource(item)}
+                      >
+                        Check Source
+                      </button>
+                    </td>
                     <td>{currency(item.qty * item.price)}</td>
                   </tr>
                 ))}
@@ -453,9 +500,9 @@ export default function Home() {
         <section className="panel pricing-panel">
           <h2>Pricing Sources</h2>
           <p className="pricing-copy">
-            Prices were sourced on 2026-08-19 where retailers exposed product
-            pricing. Salem lumberyard items are included as quote-ready local
-            sources when live unit pricing is not published.
+            Prices are not pulled live. Click Check Source on each material line,
+            confirm the supplier page or quote, and type the current unit price
+            into the bill of materials.
           </p>
           <div className="source-list">
             <a href="https://www.homedepot.com/b/Lumber-Composites-Fencing-Gates-Wood-Fencing-Wood-Fence-Pickets/Line/Cedar/Dog-Eared/N-5yc1vZc3moZ1z1977wZ1z19wkoZ1z1v1zz" rel="noreferrer" target="_blank">Home Depot cedar pickets</a>

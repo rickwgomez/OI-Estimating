@@ -348,8 +348,8 @@ button {
 
 table {
   width: 100%;
+  min-width: 1080px;
   border-collapse: collapse;
-  min-width: 900px;
 }
 
 th,
@@ -372,6 +372,12 @@ td.price-cell {
 
 td.price-cell input {
   min-height: 34px;
+}
+
+.check-button {
+  min-height: 34px;
+  white-space: nowrap;
+  padding: 7px 10px;
 }
 
 td.source-cell a,
