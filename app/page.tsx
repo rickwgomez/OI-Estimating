@@ -296,6 +296,8 @@ export default function Home() {
   const estimatedLaborHours =
     Math.ceil((baseFenceLaborHours + gateLaborHours) * difficultyFactor * 10) /
     10;
+  const laborHoursPerCrewMember =
+    Math.ceil((estimatedLaborHours / crewSize) * 10) / 10;
   const estimatedLaborCost = estimatedLaborHours * laborRate;
   const totalEstimatedCost = retailCost + estimatedLaborCost;
 
@@ -642,6 +644,10 @@ export default function Home() {
               <div>
                 <span>Total labor hours</span>
                 <strong>{estimatedLaborHours.toFixed(1)}</strong>
+                <small>
+                  {crewSize} man crew: {laborHoursPerCrewMember.toFixed(1)} hrs
+                  each
+                </small>
               </div>
               <div>
                 <span>Labor rate</span>
@@ -691,6 +697,9 @@ export default function Home() {
             <div>
               <span>Total labor hours</span>
               <strong>{estimatedLaborHours.toFixed(1)}</strong>
+              <small>
+                {crewSize} man crew: {laborHoursPerCrewMember.toFixed(1)} hrs each
+              </small>
             </div>
             <div>
               <span>Labor rate</span>

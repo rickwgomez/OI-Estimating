@@ -392,7 +392,8 @@ button {
 
 .labor-summary span,
 .print-labor-report span,
-.labor-summary small {
+.labor-summary small,
+.print-labor-report small {
   color: var(--muted);
   font-size: 0.82rem;
 }
@@ -404,7 +405,8 @@ button {
   font-size: 1.2rem;
 }
 
-.labor-summary small {
+.labor-summary small,
+.print-labor-report small {
   display: block;
   margin-top: 5px;
 }
