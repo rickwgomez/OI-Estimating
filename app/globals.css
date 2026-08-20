@@ -102,8 +102,13 @@ h3 {
 
 .total-stack {
   display: grid;
-  grid-template-columns: repeat(2, minmax(220px, 1fr));
+  grid-template-columns: repeat(3, minmax(190px, 1fr));
   gap: 12px;
+}
+
+.labor-card {
+  border-color: #c5b889;
+  background: rgba(255, 248, 222, 0.96);
 }
 
 .retail-card {
@@ -365,6 +370,43 @@ button {
   font-size: 1.6rem;
 }
 
+.labor-summary {
+  display: grid;
+  grid-template-columns: minmax(190px, 1.2fr) repeat(4, minmax(120px, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.labor-summary > div {
+  min-height: 78px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fffdf8;
+  padding: 12px;
+}
+
+.labor-summary span,
+.print-labor-report span {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.labor-summary strong,
+.print-labor-report strong {
+  display: block;
+  margin-top: 7px;
+  font-size: 1.2rem;
+}
+
+.labor-control {
+  display: grid;
+  align-content: center;
+}
+
+.print-labor-report {
+  display: none;
+}
+
 .warnings {
   display: grid;
   gap: 8px;
@@ -528,6 +570,7 @@ td.source-cell a:hover,
   }
 
   .summary-grid,
+  .labor-summary,
   .assumption-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -547,6 +590,7 @@ td.source-cell a:hover,
   }
 
   .summary-grid,
+  .labor-summary,
   .assumption-grid {
     grid-template-columns: 1fr;
   }
@@ -595,6 +639,19 @@ td.source-cell a:hover,
   .pricing-panel {
     margin-top: 18px;
     page-break-before: auto;
+  }
+
+  .print-labor-report {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 12px;
+  }
+
+  .print-labor-report h2 {
+    grid-column: 1 / -1;
   }
 
   .panel,

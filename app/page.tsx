@@ -17,6 +17,21 @@ type PriceItem = {
   url: string;
 };
 
+type DifficultyKey = "normal" | "hard" | "veryHard";
+
+const laborRate = 95;
+const crewProductionLfPerDay = 80;
+const crewSize = 2;
+const workDayHours = 8;
+const difficultyOptions: Record<
+  DifficultyKey,
+  { label: string; factor: number }
+> = {
+  normal: { label: "Normal", factor: 1 },
+  hard: { label: "Hard", factor: 1.25 },
+  veryHard: { label: "Very Hard", factor: 1.5 },
+};
+
 const priceItems: PriceItem[] = [
   {
     id: "picket",
@@ -127,6 +142,7 @@ export default function Home() {
   const [postSpacingFt, setPostSpacingFt] = useState(8);
   const [cornerCount, setCornerCount] = useState(4);
   const [wastePct, setWastePct] = useState(5);
+  const [difficulty, setDifficulty] = useState<DifficultyKey>("normal");
   const [gates, setGates] = useState<Gate[]>([
     { type: "single", width: 42, placement: "inline" },
   ]);
@@ -268,6 +284,19 @@ export default function Home() {
     0,
   );
   const retailCost = grandTotal * 1.25;
+  const difficultyFactor = difficultyOptions[difficulty].factor;
+  const baseFenceLaborHours =
+    (takeoff.boardFenceFt / crewProductionLfPerDay) *
+    workDayHours *
+    crewSize;
+  const gateLaborHours = gates.reduce(
+    (sum, gate) => sum + (gate.type === "double" ? 5 : 2.5),
+    0,
+  );
+  const estimatedLaborHours =
+    Math.ceil((baseFenceLaborHours + gateLaborHours) * difficultyFactor * 10) /
+    10;
+  const estimatedLaborCost = estimatedLaborHours * laborRate;
 
   const warnings = [
     ...gates
@@ -322,6 +351,7 @@ export default function Home() {
     setPostSpacingFt(8);
     setCornerCount(4);
     setWastePct(5);
+    setDifficulty("normal");
     setGates([{ type: "single", width: 42, placement: "inline" }]);
     setRemovedItemIds([]);
     window.localStorage.removeItem("woodFenceRemovedItemIds");
@@ -336,6 +366,10 @@ export default function Home() {
             <h1>Wood Fencing BOM</h1>
           </div>
           <div className="total-stack">
+            <div className="total-card labor-card">
+              <span>Estimated Labor</span>
+              <strong>{currency(estimatedLaborCost)}</strong>
+            </div>
             <div className="total-card">
               <span>Estimated material total</span>
               <strong>{currency(grandTotal)}</strong>
@@ -577,6 +611,41 @@ export default function Home() {
                 <strong>{takeoff.brackets}</strong>
               </div>
             </div>
+            <div className="labor-summary">
+              <div className="labor-control">
+                <label>
+                  <span>Difficulty factor</span>
+                  <select
+                    value={difficulty}
+                    onChange={(event) =>
+                      setDifficulty(event.target.value as DifficultyKey)
+                    }
+                  >
+                    {Object.entries(difficultyOptions).map(([key, option]) => (
+                      <option key={key} value={key}>
+                        {option.label} ({option.factor.toFixed(2)}x)
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+              <div>
+                <span>Crew production</span>
+                <strong>{crewProductionLfPerDay} lf/day</strong>
+              </div>
+              <div>
+                <span>Total labor hours</span>
+                <strong>{estimatedLaborHours.toFixed(1)}</strong>
+              </div>
+              <div>
+                <span>Labor rate</span>
+                <strong>{currency(laborRate)}/hr</strong>
+              </div>
+              <div>
+                <span>Estimated Labor</span>
+                <strong>{currency(estimatedLaborCost)}</strong>
+              </div>
+            </div>
             <div className="warnings">
               {warnings.map((warning) => (
                 <div className="warning" key={warning}>
@@ -611,6 +680,25 @@ export default function Home() {
         </section>
 
         <section className="panel bom-panel" id="bill-of-materials">
+          <div className="print-labor-report">
+            <h2>Estimated Labor</h2>
+            <div>
+              <span>Total labor hours</span>
+              <strong>{estimatedLaborHours.toFixed(1)}</strong>
+            </div>
+            <div>
+              <span>Labor rate</span>
+              <strong>{currency(laborRate)}/hr</strong>
+            </div>
+            <div>
+              <span>Difficulty</span>
+              <strong>{difficultyOptions[difficulty].label}</strong>
+            </div>
+            <div>
+              <span>Labor total</span>
+              <strong>{currency(estimatedLaborCost)}</strong>
+            </div>
+          </div>
           <div className="panel-header">
             <h2>Bill of Materials</h2>
             <div className="source-note">
