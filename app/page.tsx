@@ -20,7 +20,7 @@ type PriceItem = {
 type DifficultyKey = "normal" | "hard" | "veryHard";
 
 const laborRate = 95;
-const crewProductionLfPerDay = 80;
+const crewProductionLfPerDay = 70;
 const crewSize = 2;
 const workDayHours = 8;
 const difficultyOptions: Record<
