@@ -573,13 +573,76 @@ td.source-cell a:hover,
     padding: 0;
   }
 
-  button,
-  .pricing-panel {
+  .topbar,
+  .weekly-review,
+  .tool-grid,
+  .assumptions,
+  .source-note,
+  .removed-items,
+  button {
     display: none;
+  }
+
+  .bom-panel,
+  .pricing-panel {
+    display: block;
+    margin-top: 0;
+    padding: 0;
+    border: 0;
+    background: white;
+  }
+
+  .pricing-panel {
+    margin-top: 18px;
+    page-break-before: auto;
   }
 
   .panel,
   .total-card {
     box-shadow: none;
+  }
+
+  .panel-header {
+    margin-bottom: 8px;
+  }
+
+  .table-wrap {
+    overflow: visible;
+  }
+
+  table {
+    min-width: 0;
+    font-size: 0.78rem;
+  }
+
+  th,
+  td {
+    padding: 6px 5px;
+  }
+
+  th:nth-child(7),
+  td:nth-child(7),
+  th:nth-child(9),
+  td:nth-child(9) {
+    display: none;
+  }
+
+  td.price-cell input {
+    min-height: 0;
+    border: 0;
+    background: transparent;
+    padding: 0;
+  }
+
+  .source-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .source-list a {
+    border: 0;
+    background: transparent;
+    padding: 0;
   }
 }
