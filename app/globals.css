@@ -359,12 +359,20 @@ button {
   top: 68px;
 }
 
+.rail-preview-2 .rail-top {
+  top: 80px;
+}
+
 .rail-mid {
   top: 116px;
 }
 
 .rail-bottom {
   bottom: 66px;
+}
+
+.rail-preview-2 .rail-bottom {
+  bottom: 82px;
 }
 
 .gate {

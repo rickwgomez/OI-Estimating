@@ -599,9 +599,12 @@ export default function Home() {
                 Print
               </button>
             </div>
-            <div className="fence-diagram" aria-label="Fence layout visualization">
+            <div
+              className={`fence-diagram rail-preview-${takeoff.railRows}`}
+              aria-label={`${takeoff.railRows}-rail fence layout visualization`}
+            >
               <div className="rail rail-top" />
-              <div className="rail rail-mid" />
+              {takeoff.railRows === 3 && <div className="rail rail-mid" />}
               <div className="rail rail-bottom" />
               {Array.from({ length: 32 }).map((_, index) => (
                 <span className="picket" key={index} />
