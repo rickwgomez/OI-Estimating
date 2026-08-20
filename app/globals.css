@@ -94,15 +94,15 @@ h3 {
 
 .total-card {
   display: flex;
-  min-width: 280px;
+  min-width: 0;
   flex-direction: column;
   justify-content: center;
-  padding: 18px 22px;
+  padding: 16px 18px;
 }
 
 .total-stack {
   display: grid;
-  grid-template-columns: repeat(3, minmax(190px, 1fr));
+  grid-template-columns: repeat(4, minmax(160px, 1fr));
   gap: 12px;
 }
 
@@ -116,6 +116,11 @@ h3 {
   background: rgba(247, 252, 238, 0.96);
 }
 
+.total-estimate-card {
+  border-color: #98b4bd;
+  background: rgba(239, 249, 252, 0.96);
+}
+
 .total-card span,
 .summary-grid span,
 label span,
@@ -126,7 +131,7 @@ label span,
 
 .total-card strong {
   margin-top: 4px;
-  font-size: 2rem;
+  font-size: 1.75rem;
 }
 
 .weekly-review {
@@ -386,7 +391,8 @@ button {
 }
 
 .labor-summary span,
-.print-labor-report span {
+.print-labor-report span,
+.labor-summary small {
   color: var(--muted);
   font-size: 0.82rem;
 }
@@ -396,6 +402,11 @@ button {
   display: block;
   margin-top: 7px;
   font-size: 1.2rem;
+}
+
+.labor-summary small {
+  display: block;
+  margin-top: 5px;
 }
 
 .labor-control {
@@ -557,7 +568,7 @@ td.source-cell a:hover,
   }
 
   .total-stack {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .weekly-review {
@@ -583,6 +594,10 @@ td.source-cell a:hover,
 
   h1 {
     font-size: 2.2rem;
+  }
+
+  .total-stack {
+    grid-template-columns: 1fr;
   }
 
   .panel {

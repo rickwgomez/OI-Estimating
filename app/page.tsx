@@ -297,6 +297,7 @@ export default function Home() {
     Math.ceil((baseFenceLaborHours + gateLaborHours) * difficultyFactor * 10) /
     10;
   const estimatedLaborCost = estimatedLaborHours * laborRate;
+  const totalEstimatedCost = retailCost + estimatedLaborCost;
 
   const warnings = [
     ...gates
@@ -375,8 +376,12 @@ export default function Home() {
               <strong>{currency(grandTotal)}</strong>
             </div>
             <div className="total-card retail-card">
-              <span>Retail Cost</span>
+              <span>Material Retail Cost</span>
               <strong>{currency(retailCost)}</strong>
+            </div>
+            <div className="total-card total-estimate-card">
+              <span>Total Estimated Cost</span>
+              <strong>{currency(totalEstimatedCost)}</strong>
             </div>
           </div>
         </header>
@@ -632,6 +637,7 @@ export default function Home() {
               <div>
                 <span>Crew production</span>
                 <strong>{crewProductionLfPerDay} lf/day</strong>
+                <small>Includes post setting</small>
               </div>
               <div>
                 <span>Total labor hours</span>
@@ -697,6 +703,10 @@ export default function Home() {
             <div>
               <span>Labor total</span>
               <strong>{currency(estimatedLaborCost)}</strong>
+            </div>
+            <div>
+              <span>Total estimated cost</span>
+              <strong>{currency(totalEstimatedCost)}</strong>
             </div>
           </div>
           <div className="panel-header">
