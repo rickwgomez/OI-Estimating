@@ -192,6 +192,12 @@ label {
   gap: 7px;
 }
 
+.field-note {
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
 input,
 select {
   width: 100%;
@@ -237,7 +243,9 @@ button {
 
 .gate-row {
   display: grid;
-  grid-template-columns: auto minmax(130px, 0.75fr) minmax(0, 1fr) auto auto;
+  grid-template-columns:
+    auto minmax(130px, 0.7fr) minmax(160px, 1fr) minmax(84px, 0.55fr)
+    auto auto;
   align-items: center;
   gap: 8px;
   margin-bottom: 10px;
@@ -339,7 +347,7 @@ button {
 
 .summary-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 10px;
   margin-top: 14px;
 }
@@ -545,11 +553,15 @@ td.source-cell a:hover,
   }
 
   .gate-row {
-    grid-template-columns: 1fr 1fr auto auto;
+    grid-template-columns: 1fr 1fr;
   }
 
-  .gate-row span {
+  .gate-row span:first-child {
     grid-column: 1 / -1;
+  }
+
+  .remove-gate {
+    justify-self: end;
   }
 }
 

@@ -2,7 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-type Gate = { type: "single" | "double"; width: number };
+type Gate = {
+  type: "single" | "double";
+  width: number;
+  placement: "inline" | "end";
+};
 
 type PriceItem = {
   id: string;
@@ -123,7 +127,9 @@ export default function Home() {
   const [postSpacingFt, setPostSpacingFt] = useState(8);
   const [cornerCount, setCornerCount] = useState(4);
   const [wastePct, setWastePct] = useState(5);
-  const [gates, setGates] = useState<Gate[]>([{ type: "single", width: 42 }]);
+  const [gates, setGates] = useState<Gate[]>([
+    { type: "single", width: 42, placement: "inline" },
+  ]);
   const [prices, setPrices] = useState<Record<string, number>>(defaultPrices);
   const [checkedDates, setCheckedDates] =
     useState<Record<string, string>>(defaultCheckedDates);
@@ -178,8 +184,12 @@ export default function Home() {
 
   const takeoff = useMemo(() => {
     const safeSpacing = Math.min(8, Math.max(4, cleanNumber(postSpacingFt)));
-    const gateOpeningsFt = gates.reduce((sum, gate) => sum + gate.width / 12, 0);
-    const boardFenceFt = Math.max(0, lengthFt - gateOpeningsFt);
+    const inlineGateOpeningsFt = gates.reduce(
+      (sum, gate) =>
+        gate.placement === "inline" ? sum + gate.width / 12 : sum,
+      0,
+    );
+    const boardFenceFt = Math.max(0, lengthFt - inlineGateOpeningsFt);
     const railRows = heightFt >= 6 ? 3 : 2;
     const fenceBays = Math.max(1, Math.ceil(boardFenceFt / safeSpacing));
     const fencePosts = boardFenceFt > 0 ? fenceBays + 1 : 0;
@@ -188,7 +198,14 @@ export default function Home() {
       0,
     );
     const doubleGateCount = gates.filter((gate) => gate.type === "double").length;
-    const posts = fencePosts + gates.length * 2 + Math.max(0, cornerCount);
+    const gatePosts = gates.reduce((sum, gate) => {
+      if (gate.placement === "end" && boardFenceFt > 0) {
+        return sum + 1;
+      }
+
+      return sum + 2;
+    }, 0);
+    const posts = fencePosts + gatePosts + Math.max(0, cornerCount);
     const fencePickets = Math.ceil((boardFenceFt * 12) / 5.5);
     const gatePickets = gates.reduce(
       (sum, gate) => sum + Math.ceil(gate.width / 5.5),
@@ -207,6 +224,8 @@ export default function Home() {
     return {
       boardFenceFt,
       railRows,
+      inlineGateOpeningsFt,
+      gatePosts,
       pickets,
       posts,
       rails,
@@ -266,7 +285,7 @@ export default function Home() {
       ? "Enter a fence length greater than zero to produce a material takeoff."
       : "",
     takeoff.boardFenceFt === 0 && gates.length > 0
-      ? "Gate openings equal or exceed the fence length. Check whether total fence length includes gate openings."
+      ? "Inline gate openings equal or exceed the fence length. Check whether gate openings should be set as end/outside fence length."
       : "",
   ].filter(Boolean);
 
@@ -303,7 +322,7 @@ export default function Home() {
     setPostSpacingFt(8);
     setCornerCount(4);
     setWastePct(5);
-    setGates([{ type: "single", width: 42 }]);
+    setGates([{ type: "single", width: 42, placement: "inline" }]);
     setRemovedItemIds([]);
     window.localStorage.removeItem("woodFenceRemovedItemIds");
   }
@@ -351,7 +370,7 @@ export default function Home() {
             </div>
 
             <label>
-              <span>Total fence line length</span>
+              <span>Fence line length</span>
               <div className="input-row">
                 <input
                   min="1"
@@ -362,6 +381,10 @@ export default function Home() {
                 />
                 <span>ft</span>
               </div>
+              <small className="field-note">
+                Use total run length when gates are within the line. Use panel
+                footage when gates are added at an end.
+              </small>
             </label>
 
             <label>
@@ -425,7 +448,12 @@ export default function Home() {
                 <h3>Gates</h3>
                 <button
                   type="button"
-                  onClick={() => setGates([...gates, { type: "single", width: 42 }])}
+                  onClick={() =>
+                    setGates([
+                      ...gates,
+                      { type: "single", width: 42, placement: "inline" },
+                    ])
+                  }
                 >
                   Add Gate
                 </button>
@@ -447,6 +475,21 @@ export default function Home() {
                   >
                     <option value="single">Single swing</option>
                     <option value="double">Double drive</option>
+                  </select>
+                  <select
+                    aria-label={`Gate ${index + 1} placement`}
+                    value={gate.placement}
+                    onChange={(event) => {
+                      const next = [...gates];
+                      next[index] = {
+                        ...gate,
+                        placement: event.target.value as Gate["placement"],
+                      };
+                      setGates(next);
+                    }}
+                  >
+                    <option value="inline">Within fence length</option>
+                    <option value="end">End / outside length</option>
                   </select>
                   <input
                     aria-label={`Gate ${index + 1} opening width in inches`}
@@ -510,12 +553,20 @@ export default function Home() {
             </div>
             <div className="summary-grid">
               <div>
+                <span>Wood fence footage</span>
+                <strong>{takeoff.boardFenceFt.toFixed(1)}</strong>
+              </div>
+              <div>
                 <span>Fence boards</span>
                 <strong>{takeoff.pickets}</strong>
               </div>
               <div>
                 <span>Posts</span>
                 <strong>{takeoff.posts}</strong>
+              </div>
+              <div>
+                <span>Gate posts counted</span>
+                <strong>{takeoff.gatePosts}</strong>
               </div>
               <div>
                 <span>2x4 rails</span>
@@ -552,8 +603,9 @@ export default function Home() {
               three rails for 6 ft fence.
             </p>
             <p>
-              Corner input adds dedicated corner posts. Single swing gate leaves
-              max at 48 in.; double drive leaves are checked at half the opening.
+              Gates within the fence length replace that opening and add two
+              gate posts. End gates do not reduce fence footage and add one
+              extra post because the fence end post is shared.
             </p>
           </div>
         </section>
