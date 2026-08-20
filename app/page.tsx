@@ -139,6 +139,7 @@ function cleanNumber(value: number) {
 export default function Home() {
   const [lengthFt, setLengthFt] = useState(120);
   const [heightFt, setHeightFt] = useState(6);
+  const [railRows, setRailRows] = useState(3);
   const [postSpacingFt, setPostSpacingFt] = useState(8);
   const [cornerCount, setCornerCount] = useState(4);
   const [wastePct, setWastePct] = useState(5);
@@ -206,7 +207,7 @@ export default function Home() {
       0,
     );
     const boardFenceFt = Math.max(0, lengthFt - inlineGateOpeningsFt);
-    const railRows = heightFt >= 6 ? 3 : 2;
+    const safeRailRows = railRows === 2 ? 2 : 3;
     const fenceBays = Math.max(1, Math.ceil(boardFenceFt / safeSpacing));
     const fencePosts = boardFenceFt > 0 ? fenceBays + 1 : 0;
     const gateLeaves = gates.reduce(
@@ -230,16 +231,16 @@ export default function Home() {
     const pickets = Math.ceil(
       (fencePickets + gatePickets) * (1 + wastePct / 100),
     );
-    const rails = Math.ceil((boardFenceFt * railRows) / 8) + gateLeaves * 3;
-    const brackets = fenceBays * railRows * 2;
+    const rails = Math.ceil((boardFenceFt * safeRailRows) / 8) + gateLeaves * 3;
+    const brackets = fenceBays * safeRailRows * 2;
     const concrete = posts * 2;
     const stapleCount = Math.ceil(
-      (fencePickets + gatePickets) * railRows * 2 * 1.1,
+      (fencePickets + gatePickets) * safeRailRows * 2 * 1.1,
     );
 
     return {
       boardFenceFt,
-      railRows,
+      railRows: safeRailRows,
       inlineGateOpeningsFt,
       gatePosts,
       pickets,
@@ -253,7 +254,7 @@ export default function Home() {
       antiSag: gateLeaves,
       dropRod: doubleGateCount,
     };
-  }, [cornerCount, gates, heightFt, lengthFt, postSpacingFt, wastePct]);
+  }, [cornerCount, gates, lengthFt, postSpacingFt, railRows, wastePct]);
 
   const quantities: Record<string, number> = {
     picket: takeoff.pickets,
@@ -351,6 +352,7 @@ export default function Home() {
   function resetInputs() {
     setLengthFt(120);
     setHeightFt(6);
+    setRailRows(3);
     setPostSpacingFt(8);
     setCornerCount(4);
     setWastePct(5);
@@ -439,6 +441,32 @@ export default function Home() {
                 <option value="6">6 ft</option>
               </select>
             </label>
+
+            <fieldset className="radio-field">
+              <legend>Fence rails</legend>
+              <div className="radio-row">
+                <label>
+                  <input
+                    checked={railRows === 2}
+                    name="railRows"
+                    type="radio"
+                    value="2"
+                    onChange={() => setRailRows(2)}
+                  />
+                  <span>2 rail</span>
+                </label>
+                <label>
+                  <input
+                    checked={railRows === 3}
+                    name="railRows"
+                    type="radio"
+                    value="3"
+                    onChange={() => setRailRows(3)}
+                  />
+                  <span>3 rail</span>
+                </label>
+              </div>
+            </fieldset>
 
             <label>
               <span>Post spacing</span>
@@ -614,6 +642,10 @@ export default function Home() {
                 <strong>{takeoff.rails}</strong>
               </div>
               <div>
+                <span>Rail rows</span>
+                <strong>{takeoff.railRows}</strong>
+              </div>
+              <div>
                 <span>Rail brackets</span>
                 <strong>{takeoff.brackets}</strong>
               </div>
@@ -679,8 +711,8 @@ export default function Home() {
               two fast-setting concrete bags each.
             </p>
             <p>
-              Rails are kiln-dried 2x4x8 boards: two rails for 4-5 ft fence,
-              three rails for 6 ft fence.
+              Rails are kiln-dried 2x4x8 boards. Select either a 2-rail or
+              3-rail fence in Project Inputs.
             </p>
             <p>
               Gates within the fence length replace that opening and add two
