@@ -645,8 +645,7 @@ export default function Home() {
                 <span>Total labor hours</span>
                 <strong>{estimatedLaborHours.toFixed(1)}</strong>
                 <small>
-                  {crewSize} man crew: {laborHoursPerCrewMember.toFixed(1)} hrs
-                  each
+                  {crewSize} Men: {laborHoursPerCrewMember.toFixed(1)} ea.
                 </small>
               </div>
               <div>
@@ -698,7 +697,7 @@ export default function Home() {
               <span>Total labor hours</span>
               <strong>{estimatedLaborHours.toFixed(1)}</strong>
               <small>
-                {crewSize} man crew: {laborHoursPerCrewMember.toFixed(1)} hrs each
+                {crewSize} Men: {laborHoursPerCrewMember.toFixed(1)} ea.
               </small>
             </div>
             <div>
