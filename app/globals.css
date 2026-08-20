@@ -244,10 +244,9 @@ button {
 .gate-row {
   display: grid;
   grid-template-columns:
-    auto minmax(130px, 0.7fr) minmax(160px, 1fr) minmax(84px, 0.55fr)
-    auto auto;
+    52px minmax(82px, 1fr) minmax(84px, 1fr) 66px 20px 34px;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   margin-bottom: 10px;
 }
 
@@ -258,7 +257,7 @@ button {
 }
 
 .remove-gate {
-  width: 38px;
+  width: 34px;
   padding: 0;
   background: transparent;
   color: var(--warn);

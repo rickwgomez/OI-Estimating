@@ -52,27 +52,27 @@ const priceItems: PriceItem[] = [
   },
   {
     id: "concrete",
-    name: "Sakrete 50-lb fast-setting concrete mix",
+    name: "Quikrete 50 lb. fast-setting concrete mix",
     unit: "bag",
-    price: 7.17,
-    source: "Lowe's Salem",
-    url: "https://www.lowes.com/pd/Sakrete-50-Pound-s-Fast-setting-Concrete-mix/3338802",
+    price: 7.97,
+    source: "Home Depot",
+    url: "https://www.homedepot.com/p/100318521",
   },
   {
     id: "staples",
-    name: "1.5 in. stainless collated fence staples for Sinco staple guns",
+    name: "Grip-Rite 7/16 x 1-1/2 in. stainless collated staples, 500 count",
     unit: "box",
-    price: 48,
-    source: "Estimator allowance",
-    url: "https://www.homedepot.com/p/318183027",
+    price: 33.78,
+    source: "Home Depot",
+    url: "https://www.homedepot.com/p/205309513",
   },
   {
     id: "screws",
-    name: "Exterior connector screws or galvanized nails",
+    name: "Simpson Strong-Tie 1-1/2 in. HDG connector nails, 600 count",
     unit: "box",
-    price: 18,
-    source: "Estimator allowance",
-    url: "https://www.capitallumber.co/products/fencing",
+    price: 25.21,
+    source: "Home Depot",
+    url: "https://www.homedepot.com/b/Hardware-Fasteners/Galvanized/Exterior/N-5yc1vZc255Z1z17e31Z1z1bm6h",
   },
   {
     id: "gateHardware",
@@ -86,17 +86,17 @@ const priceItems: PriceItem[] = [
     id: "antiSag",
     name: "Anti-sag gate brace kit",
     unit: "kit",
-    price: 11.47,
-    source: "Home Depot benchmark",
-    url: "https://www.gardenista.com/brand/everbilt/",
+    price: 15.98,
+    source: "Home Depot",
+    url: "https://www.homedepot.com/p/327600050",
   },
   {
     id: "dropRod",
-    name: "Drop rod / cane bolt for double drive gate",
+    name: "Everbilt 12 in. black cane bolt for double drive gate",
     unit: "each",
-    price: 18,
-    source: "Estimator allowance",
-    url: "https://www.capitallumber.co/products/fencing",
+    price: 12.98,
+    source: "Home Depot",
+    url: "https://www.homedepot.com/p/320092607",
   },
 ];
 
@@ -105,10 +105,10 @@ const defaultPrices = Object.fromEntries(
 ) as Record<string, number>;
 
 const defaultCheckedDates = Object.fromEntries(
-  priceItems.map((item) => [item.id, "2026-08-19"]),
+  priceItems.map((item) => [item.id, "2026-08-20"]),
 ) as Record<string, string>;
 
-const priceDataVersion = "2026-08-19-post-rail-concrete-retail-sources";
+const priceDataVersion = "2026-08-20-home-depot-only-sources";
 
 function currency(value: number) {
   return value.toLocaleString("en-US", {
@@ -148,30 +148,30 @@ export default function Home() {
       "woodFenceRemovedItemIds",
     );
 
+    const hasOldPriceData = savedPriceDataVersion !== priceDataVersion;
+
     if (savedPrices) {
-      const nextPrices = { ...defaultPrices, ...JSON.parse(savedPrices) };
+      const nextPrices = hasOldPriceData
+        ? defaultPrices
+        : { ...defaultPrices, ...JSON.parse(savedPrices) };
 
-      if (savedPriceDataVersion !== priceDataVersion) {
-        nextPrices.post = defaultPrices.post;
-        nextPrices.rail = defaultPrices.rail;
-        nextPrices.concrete = defaultPrices.concrete;
-        window.localStorage.setItem(
-          "woodFencePriceDataVersion",
-          priceDataVersion,
-        );
-        window.localStorage.setItem("woodFencePrices", JSON.stringify(nextPrices));
-      }
-
+      window.localStorage.setItem("woodFencePriceDataVersion", priceDataVersion);
+      window.localStorage.setItem("woodFencePrices", JSON.stringify(nextPrices));
       setPrices(nextPrices);
     } else {
       window.localStorage.setItem("woodFencePriceDataVersion", priceDataVersion);
     }
 
-    if (savedCheckedDates) {
+    if (savedCheckedDates && !hasOldPriceData) {
       setCheckedDates({
         ...defaultCheckedDates,
         ...JSON.parse(savedCheckedDates),
       });
+    } else if (hasOldPriceData) {
+      window.localStorage.setItem(
+        "woodFenceCheckedDates",
+        JSON.stringify(defaultCheckedDates),
+      );
     }
 
     if (savedRemovedItemIds) {
@@ -231,7 +231,7 @@ export default function Home() {
       rails,
       brackets,
       concrete,
-      stapleBoxes: Math.max(1, Math.ceil(stapleCount / 1000)),
+      stapleBoxes: Math.max(1, Math.ceil(stapleCount / 500)),
       screwBoxes: Math.max(1, Math.ceil((brackets * 6 + gateLeaves * 40) / 350)),
       gateHardware: gateLeaves,
       antiSag: gateLeaves,
@@ -473,8 +473,8 @@ export default function Home() {
                       setGates(next);
                     }}
                   >
-                    <option value="single">Single swing</option>
-                    <option value="double">Double drive</option>
+                    <option value="single">Single</option>
+                    <option value="double">Double</option>
                   </select>
                   <select
                     aria-label={`Gate ${index + 1} placement`}
@@ -488,8 +488,8 @@ export default function Home() {
                       setGates(next);
                     }}
                   >
-                    <option value="inline">Within fence length</option>
-                    <option value="end">End / outside length</option>
+                    <option value="inline">In Fence</option>
+                    <option value="end">Outside</option>
                   </select>
                   <input
                     aria-label={`Gate ${index + 1} opening width in inches`}
@@ -703,16 +703,20 @@ export default function Home() {
           <h2>Pricing Sources</h2>
           <p className="pricing-copy">
             Prices are not pulled live. Click Check Source on each material line,
-            confirm the supplier page or quote, and type the current unit price
-            into the bill of materials.
+            confirm the Home Depot page or quote, and type the current unit
+            price into the bill of materials.
           </p>
           <div className="source-list">
             <a href="https://www.homedepot.com/b/Lumber-Composites-Fencing-Gates-Wood-Fencing-Wood-Fence-Pickets/Line/Cedar/Dog-Eared/N-5yc1vZc3moZ1z1977wZ1z19wkoZ1z1v1zz" rel="noreferrer" target="_blank">Home Depot cedar pickets</a>
+            <a href="https://www.homedepot.com/p/205220341" rel="noreferrer" target="_blank">Home Depot 4x4 posts</a>
+            <a href="https://www.homedepot.com/b/Lumber-Composites-Dimensional-Lumber/2x4/8-ft/2-in/N-5yc1vZc3tcZ1z0ywxvZ1z1rkqlZ1z1soke" rel="noreferrer" target="_blank">Home Depot 2x4 rails</a>
             <a href="https://www.homedepot.com/p/100375311" rel="noreferrer" target="_blank">Simpson FB24Z rail brackets</a>
+            <a href="https://www.homedepot.com/p/100318521" rel="noreferrer" target="_blank">Home Depot fast-setting concrete</a>
+            <a href="https://www.homedepot.com/p/205309513" rel="noreferrer" target="_blank">Home Depot stainless staples</a>
+            <a href="https://www.homedepot.com/b/Hardware-Fasteners/Galvanized/Exterior/N-5yc1vZc255Z1z17e31Z1z1bm6h" rel="noreferrer" target="_blank">Home Depot connector nails</a>
             <a href="https://www.homedepot.com/p/327599432" rel="noreferrer" target="_blank">Typical hinge and latch set</a>
-            <a href="https://parr.com/locations/salem-oregon-lumber/" rel="noreferrer" target="_blank">PARR Lumber Salem</a>
-            <a href="https://www.capitallumber.co/products/fencing" rel="noreferrer" target="_blank">Capital Lumber fencing stock</a>
-            <a href="https://www.lowes.com/store/OR-Salem/1600" rel="noreferrer" target="_blank">Lowe&apos;s Salem store</a>
+            <a href="https://www.homedepot.com/p/327600050" rel="noreferrer" target="_blank">Home Depot anti-sag kit</a>
+            <a href="https://www.homedepot.com/p/320092607" rel="noreferrer" target="_blank">Home Depot cane bolt</a>
           </div>
         </section>
       </section>
