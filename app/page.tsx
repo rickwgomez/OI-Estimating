@@ -28,7 +28,8 @@ const defaultWastePct = 7;
 const priceDataVersion = "2026-09-03-ramco-quote-1210175-hinge-weight";
 const nominalPanelWidthFt = 6;
 const panelPicketSpacingIn = 3.9375;
-const panelPicketHeightOffsetFt = 11 / 12;
+const standardPanelHeightIn = 72;
+const ld72PanelPicketCutLengthIn = 66;
 const hingeWeightThresholdLb = 200;
 const tubeWeightsLbPerFt: Record<PicketSize | "frame", number> = {
   frame: 2.25,
@@ -418,7 +419,12 @@ export default function Home() {
       panelCount > 0
         ? Math.max(2, Math.round((safeOpeningFt * 12) / panelPicketSpacingIn))
         : 0;
-    const picketCutLengthFt = Math.max(1, safeHeightFt - panelPicketHeightOffsetFt);
+    const picketCutLengthFt = Math.max(
+      1,
+      (safeHeightFt * 12 -
+        (standardPanelHeightIn - ld72PanelPicketCutLengthIn)) /
+        12,
+    );
     const picketLf = panelCount * picketCountPerPanel * picketCutLengthFt;
 
     return {
