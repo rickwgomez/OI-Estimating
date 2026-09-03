@@ -462,7 +462,8 @@ export default function Home() {
         ? takeoff.leafCount * takeoff.safeQty
         : 0,
     latch: hasGateMaterials ? takeoff.safeQty : 0,
-    dropRod: assemblyType === "double" ? takeoff.safeQty : 0,
+    dropRod:
+      hasGateMaterials && assemblyType === "double" ? takeoff.safeQty : 0,
     shopSupplies: hasGateMaterials ? takeoff.safeQty : 0,
   };
 
