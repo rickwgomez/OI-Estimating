@@ -11,7 +11,7 @@ The app uses the same setup and visual style as the wood fencing estimator, but 
 - Panel runs start at 8 ft wide by 6 ft high when enabled.
 - Light Duty / LD-72 panel runs divide the total run into equal panel widths, count one starter/full panel, and count the remaining panels as W-Tabs panels.
 - LD-72 panels include 1-1/2 in. posts, 1 in. top and bottom rails, and 1/2 in. pickets.
-- LD-72 picket material uses a 66 in. picket cut length for a 72 in. panel instead of the full panel height.
+- LD-72 picket material uses 15 pickets at 61 in. each for a 72 in. panel, buying four 20 ft sticks for one standard panel before optional field waste on other materials.
 - LD-72 W-Tabs panels include 2 tabs per panel and 1/4 in. tech screws at 1 screw per tab.
 - Both full and tabbed LD-72 panels use 3 labor hours per panel.
 - Typical frame: 1-1/2 in. x 1-1/2 in. x .120 wall tube.
