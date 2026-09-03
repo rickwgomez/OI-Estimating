@@ -155,6 +155,15 @@ const priceItems: PriceItem[] = [
       "LD-72 Single Panel W-T drawing calls for custom tabs, 2 per tabbed panel.",
   },
   {
+    id: "panelTechScrews",
+    name: '1/4" tech screws for panel tabs',
+    unit: "each",
+    price: 0.25,
+    source: "Allowance",
+    sourceDetail:
+      "One 1/4 in. tech screw per LD-72 W-Tabs mounting tab.",
+  },
+  {
     id: "trussRod",
     name: '3/8" truss rod and adjuster allowance',
     unit: "assembly",
@@ -472,6 +481,7 @@ export default function Home() {
     panelRailOne: panelTakeoff.railSticks,
     picketHalf: panelTakeoff.picketSticks,
     panelTabs: panelTakeoff.tabQty,
+    panelTechScrews: panelTakeoff.tabQty,
     shopSupplies: panelTakeoff.shopSupplyQty,
   };
 
@@ -854,7 +864,7 @@ export default function Home() {
               <div className="gate-title">
                 <h3>Panels</h3>
                 <span className="field-note">
-                  LD-72: one full panel, remaining panels W-T
+                  Light Duty / LD-72: one starter panel, remaining panels W-Tabs
                 </span>
               </div>
               <div className="switch-row">
@@ -880,8 +890,13 @@ export default function Home() {
                   value={panelType}
                   onChange={(event) => setPanelType(event.target.value as PanelType)}
                 >
-                  <option value="ld72">LD-72 panel run</option>
+                  <option value="ld72">Light Duty / LD-72</option>
                 </select>
+                <small className="field-note">
+                  Starts with one LD-72 Single Panel with posts on both ends.
+                  Additional panels use LD-72 Single Panel W-Tabs and fasten
+                  with one 1/4 in. tech screw per tab.
+                </small>
               </label>
               <div className="input-pair">
                 <label>
