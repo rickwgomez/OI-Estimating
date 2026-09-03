@@ -882,7 +882,7 @@ export default function Home() {
                       const checked = event.target.checked;
                       setNoPanels(checked);
                       if (!checked && panelRunFt === 0) {
-                        setPanelRunFt(8);
+                        setPanelRunFt(6);
                       }
                     }}
                   />
