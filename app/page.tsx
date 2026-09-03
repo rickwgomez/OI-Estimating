@@ -231,6 +231,7 @@ function ceilTo(value: number, increment: number) {
 export default function Home() {
   const [assemblyType, setAssemblyType] = useState<AssemblyType>("double");
   const [noGates, setNoGates] = useState(false);
+  const [noPanels, setNoPanels] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [openingFt, setOpeningFt] = useState(12);
   const [heightFt, setHeightFt] = useState(6);
@@ -392,7 +393,7 @@ export default function Home() {
   ]);
 
   const panelTakeoff = useMemo(() => {
-    const safeRunFt = Math.max(0, cleanNumber(panelRunFt));
+    const safeRunFt = noPanels ? 0 : Math.max(0, cleanNumber(panelRunFt));
     const panelCount =
       safeRunFt > 0 ? Math.max(1, Math.ceil(safeRunFt / nominalPanelWidthFt)) : 0;
     const fullPanelCount = panelCount > 0 ? 1 : 0;
@@ -430,6 +431,7 @@ export default function Home() {
       laborTarget: safeRunFt * targetSellPerLf,
     };
   }, [
+    noPanels,
     panelHeightFt,
     panelRunFt,
     panelType,
@@ -560,6 +562,7 @@ export default function Home() {
   function resetInputs() {
     setAssemblyType("double");
     setNoGates(false);
+    setNoPanels(true);
     setQuantity(1);
     setOpeningFt(12);
     setHeightFt(6);
@@ -705,13 +708,7 @@ export default function Home() {
                 <input
                   checked={noGates}
                   type="checkbox"
-                  onChange={(event) => {
-                    const checked = event.target.checked;
-                    setNoGates(checked);
-                    if (checked && panelRunFt === 0) {
-                      setPanelRunFt(8);
-                    }
-                  }}
+                  onChange={(event) => setNoGates(event.target.checked)}
                 />
                 <span>No Gates</span>
               </label>
@@ -859,9 +856,26 @@ export default function Home() {
                   LD-72: one full panel, remaining panels W-T
                 </span>
               </div>
+              <div className="switch-row">
+                <label>
+                  <input
+                    checked={noPanels}
+                    type="checkbox"
+                    onChange={(event) => {
+                      const checked = event.target.checked;
+                      setNoPanels(checked);
+                      if (!checked && panelRunFt === 0) {
+                        setPanelRunFt(8);
+                      }
+                    }}
+                  />
+                  <span>No Panels</span>
+                </label>
+              </div>
               <label>
                 <span>Panel type</span>
                 <select
+                  disabled={noPanels}
                   value={panelType}
                   onChange={(event) => setPanelType(event.target.value as PanelType)}
                 >
@@ -873,6 +887,7 @@ export default function Home() {
                   <span>Panel run</span>
                   <div className="input-row">
                     <input
+                      disabled={noPanels}
                       min="0"
                       step="0.5"
                       type="number"
@@ -886,6 +901,7 @@ export default function Home() {
                   <span>Panel height</span>
                   <div className="input-row">
                     <input
+                      disabled={noPanels}
                       min="3"
                       step="0.5"
                       type="number"
