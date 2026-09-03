@@ -1,32 +1,26 @@
-# Wood Fence Estimator
+# OI Gate and Panel Estimator
 
-Static estimating tool for residential wood fencing in the Salem, Oregon area.
+Custom ornamental iron gate and panel estimating tool for Pacific Outdoor Fence.
 
-Open `index.html` in a browser to use it. No install or build step is required.
+The app uses the same setup and visual style as the wood fencing estimator, but the takeoff rules and bill of materials are for ornamental iron gates and panels.
 
 ## Current assumptions
 
-- Fence height: 4 ft, 5 ft, or 6 ft.
-- Standard maximum post spacing: 8 ft.
-- Boards: 5/8 in. x 5-1/2 in. dog-ear pickets with 5.5 in. coverage.
-- Posts: 4x4x8 #2 ground-contact pressure-treated posts.
-- Rails: 2x4x8 kiln-dried rails; 2 rails for 4-5 ft fence and 3 rails for 6 ft fence.
-- Rails use Simpson FB24Z-style rail brackets.
-- Concrete: 2 bags of fast-setting mix per post.
-- Gate width warning starts above 45 in.
-- Gate material includes pickets, 2x4 gate frame allowance, hinge/latch set, and anti-sag brace kit.
-- Staple and connector fastener quantities are estimated allowances.
+- Gate types: double drive gate or single gate, with a No Gates option for panel-only estimating.
+- Panels can also be added to a gate package with their own material table.
+- Panel runs start at 8 ft wide by 6 ft high when enabled.
+- LD-72 panel runs divide the total run into equal panel widths, count one full panel, and count the remaining panels as tabbed panels.
+- LD-72 panels include 1-1/2 in. posts, 1 in. top and bottom rails, and 1/2 in. pickets.
+- Both full and tabbed LD-72 panels use 3 labor hours per panel.
+- Typical frame: 1-1/2 in. x 1-1/2 in. x .120 wall tube.
+- Pickets: 5/8 in. default, with 1/2 in. and 3/4 in. options.
+- Top styles: flat, french curve, or arch.
+- Mid-rail: optional.
+- Truss rod: automatic for double drive gates over 48 in., with an always-on option.
+- Gate hinges: 5 in. block hinges under 200 lb per leaf, 7 in. block hinges at 200 lb or heavier.
+- Posts: 5 in. by default, 6 in. for openings over 12 ft.
+- Labor: $95/hr using 1.45 hours per linear foot, with a $150/lf rule-of-thumb target shown for comparison.
 
 ## Pricing note
 
-The estimator includes editable default prices with source links. Some Salem-area suppliers publish stocked fencing materials but require a direct quote for current lumber prices, so the bill of materials should be refreshed before a final customer bid.
-
-Sources reviewed on 2026-08-19:
-
-- Home Depot cedar dog-ear pickets
-- Home Depot Simpson FB24Z rail brackets
-- Home Depot typical gate hinge and latch set
-- PARR Lumber Salem location and lumber/fencing availability
-- Capital Lumber fencing stock list
-- Lowe's Salem store
-- 2026 retail fence/lumber pricing benchmarks
+Material defaults use uploaded Ramco Quote 1210175 where the needed item is listed. Rows that were not present in the quote are editable allowances and should be updated when the current supplier line is available.

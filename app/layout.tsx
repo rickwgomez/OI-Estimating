@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Wood Fence Estimator",
+  title: "OI Gate & Panel Estimator",
   description:
-    "Residential wood fence estimating tool for Salem, Oregon material takeoffs and bill of materials.",
+    "Custom ornamental iron gate and panel estimating tool for material takeoffs, labor, and bill of materials.",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
