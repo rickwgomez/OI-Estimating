@@ -255,7 +255,7 @@ export default function Home() {
   const [difficulty, setDifficulty] = useState<DifficultyKey>("normal");
   const [materialMarkupPct, setMaterialMarkupPct] = useState(70);
   const [panelType, setPanelType] = useState<PanelType>("ld72");
-  const [panelRunFt, setPanelRunFt] = useState(0);
+  const [panelRunFt, setPanelRunFt] = useState(6);
   const [panelHeightFt, setPanelHeightFt] = useState(6);
   const [prices, setPrices] = useState<Record<string, number>>(defaultPrices);
   const [checkedDates, setCheckedDates] =
@@ -592,7 +592,7 @@ export default function Home() {
     setDifficulty("normal");
     setMaterialMarkupPct(70);
     setPanelType("ld72");
-    setPanelRunFt(0);
+    setPanelRunFt(6);
     setPanelHeightFt(6);
     setRemovedItemIds([]);
     window.localStorage.removeItem("oiGateRemovedItemIds");
