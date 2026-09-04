@@ -523,6 +523,20 @@ export default function Home() {
     (sum, item) => sum + item.qty * item.price,
     0,
   );
+  const gateMaterialCost = gateLineItems.reduce(
+    (sum, item) => sum + item.qty * item.price,
+    0,
+  );
+  const panelMaterialCost = panelLineItems.reduce(
+    (sum, item) => sum + item.qty * item.price,
+    0,
+  );
+  const gateCostEach =
+    hasGateMaterials && takeoff.safeQty > 0
+      ? gateMaterialCost / takeoff.safeQty
+      : 0;
+  const panelCostEach =
+    panelTakeoff.safeQty > 0 ? panelMaterialCost / panelTakeoff.safeQty : 0;
   const materialRetail = materialCost * (1 + materialMarkupPct / 100);
   const totalLaborHours =
     (hasGateMaterials ? takeoff.laborHours : 0) + panelTakeoff.laborHours;
@@ -1171,6 +1185,20 @@ export default function Home() {
               editable.
             </div>
           </div>
+          <div className="bom-summary">
+            <div>
+              <span>Gate material total</span>
+              <strong>{currency(gateMaterialCost)}</strong>
+              <small>
+                {hasGateMaterials ? `${takeoff.safeQty} gate package` : "No gates"}
+              </small>
+            </div>
+            <div>
+              <span>Material per gate</span>
+              <strong>{currency(gateCostEach)}</strong>
+              <small>before markup and labor</small>
+            </div>
+          </div>
           <div className="table-wrap">
             <table>
               <thead>
@@ -1196,6 +1224,18 @@ export default function Home() {
               <div className="source-note">
                 LD-72 panels use 1.5 in. posts, 1 in. top and bottom rails,
                 1/2 in. pickets, and 2 tabs on each tabbed panel.
+              </div>
+            </div>
+            <div className="bom-summary">
+              <div>
+                <span>Panel material total</span>
+                <strong>{currency(panelMaterialCost)}</strong>
+                <small>{panelTakeoff.safeQty} panels in run</small>
+              </div>
+              <div>
+                <span>Material per panel</span>
+                <strong>{currency(panelCostEach)}</strong>
+                <small>before markup and labor</small>
               </div>
             </div>
             <div className="table-wrap">
