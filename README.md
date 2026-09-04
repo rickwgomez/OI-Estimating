@@ -12,6 +12,7 @@ The app uses the same setup and visual style as the wood fencing estimator, but 
 - Light Duty / LD-72 panel runs divide the total panel run into equal center-to-center panel bays with a 54 in. minimum and 96 in. maximum.
 - LD-72 runs count one starter/full panel, and count the remaining panels as W-Tabs panels.
 - LD-72 panels include 1-1/2 in. posts, 1 in. top and bottom rails, and 1/2 in. pickets.
+- Panel BOM layout details show panel size center-to-center, clear picket spacing, and pickets per panel.
 - LD-72 picket material uses 15 pickets at 61 in. each for a 72 in. center-to-center panel bay, then scales the picket count for wider or narrower equal bays.
 - LD-72 W-Tabs panels include 2 tabs per panel and 1/4 in. tech screws at 1 screw per tab.
 - Both full and tabbed LD-72 panels use 3 labor hours per panel.

@@ -30,6 +30,8 @@ const minPanelCenterToCenterIn = 54;
 const maxPanelCenterToCenterIn = 96;
 const standardPanelCenterToCenterIn = 72;
 const ld72PanelPicketCount = 15;
+const ld72PanelPostWidthIn = 1.5;
+const ld72PanelPicketWidthIn = 0.5;
 const standardPanelHeightIn = 72;
 const ld72PanelPicketCutLengthIn = 61;
 const hingeWeightThresholdLb = 200;
@@ -437,6 +439,16 @@ export default function Home() {
             ),
           )
         : 0;
+    const picketClearSpacingIn =
+      picketCountPerPanel > 0
+        ? Math.max(
+            0,
+            (centerToCenterIn -
+              ld72PanelPostWidthIn -
+              picketCountPerPanel * ld72PanelPicketWidthIn) /
+              (picketCountPerPanel + 1),
+          )
+        : 0;
     const picketCutLengthFt = Math.max(
       1,
       (safeHeightFt * 12 -
@@ -460,6 +472,7 @@ export default function Home() {
       railSticks:
         panelCount > 0 ? Math.ceil((railLf * wasteFactor) / stockLengthFt) : 0,
       picketCountPerPanel,
+      picketClearSpacingIn,
       picketCutLengthFt,
       picketSticks:
         panelCount > 0 ? Math.ceil(picketLf / stockLengthFt) : 0,
@@ -954,11 +967,6 @@ export default function Home() {
                     />
                     <span>ft</span>
                   </div>
-                  <small className="field-note">
-                    Breaks into equal panel bays between{" "}
-                    {minPanelCenterToCenterIn}&quot; and{" "}
-                    {maxPanelCenterToCenterIn}&quot; center-to-center.
-                  </small>
                 </label>
                 <label>
                   <span>Panel height</span>
@@ -1254,13 +1262,35 @@ export default function Home() {
 
           <div className="panel-subsection">
             <div className="panel-header">
-              <h2>Panel Bill of Materials</h2>
+              <div className="panel-heading-line">
+                <span className="panel-range-note">
+                  {minPanelCenterToCenterIn}&quot;-{maxPanelCenterToCenterIn}&quot; C-C
+                </span>
+                <h2>Panel Bill of Materials</h2>
+              </div>
               <div className="source-note">
                 LD-72 panels use 1.5 in. posts, 1 in. top and bottom rails,
                 1/2 in. pickets, and 2 tabs on each tabbed panel.
               </div>
             </div>
             <div className="bom-summary">
+              <div>
+                <span>Panel size C-C</span>
+                <strong>{panelTakeoff.centerToCenterIn.toFixed(1)}&quot;</strong>
+                <small>equal bay size</small>
+              </div>
+              <div>
+                <span>Picket spacing</span>
+                <strong>{panelTakeoff.picketClearSpacingIn.toFixed(2)}&quot;</strong>
+                <small>clear space between 1/2&quot; pickets</small>
+              </div>
+              <div>
+                <span>Pickets per panel</span>
+                <strong>{panelTakeoff.picketCountPerPanel}</strong>
+                <small>
+                  {panelTakeoff.picketCutLengthFt.toFixed(2)} ft cut length
+                </small>
+              </div>
               <div>
                 <span>Panel material total</span>
                 <strong>{currency(panelMaterialCost)}</strong>
