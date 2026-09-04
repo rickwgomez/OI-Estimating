@@ -900,13 +900,12 @@ export default function Home() {
                       }
                     }}
                   />
-                  <span>No Panels</span>
+                  <span>No Panels / exclude panels from estimate</span>
                 </label>
               </div>
               <label>
                 <span>Panel type</span>
                 <select
-                  disabled={noPanels}
                   value={panelType}
                   onChange={(event) => setPanelType(event.target.value as PanelType)}
                 >
@@ -923,7 +922,6 @@ export default function Home() {
                   <span>Panel run</span>
                   <div className="input-row">
                     <input
-                      disabled={noPanels}
                       min="0"
                       step="0.5"
                       type="number"
@@ -937,7 +935,6 @@ export default function Home() {
                   <span>Panel height</span>
                   <div className="input-row">
                     <input
-                      disabled={noPanels}
                       min="3"
                       step="0.5"
                       type="number"

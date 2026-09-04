@@ -7,7 +7,7 @@ The app uses the same setup and visual style as the wood fencing estimator, but 
 ## Current assumptions
 
 - Gate types: double drive gate or single gate, with a No Gates option for panel-only estimating.
-- Panels default to No Panels, but can also be added to a gate package with their own material table.
+- Panels default to No Panels, but the panel run can still be edited before panels are included in the estimate.
 - Panel runs start at 6 ft wide by 6 ft high when enabled.
 - Light Duty / LD-72 panel runs divide the total run into equal panel widths, count one starter/full panel, and count the remaining panels as W-Tabs panels.
 - LD-72 panels include 1-1/2 in. posts, 1 in. top and bottom rails, and 1/2 in. pickets.
