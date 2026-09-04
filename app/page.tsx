@@ -26,7 +26,9 @@ const panelLaborHoursEach = 3;
 const stockLengthFt = 20;
 const defaultWastePct = 7;
 const priceDataVersion = "2026-09-03-ramco-quote-1210175-hinge-weight";
-const nominalPanelWidthFt = 6;
+const minPanelCenterToCenterIn = 54;
+const maxPanelCenterToCenterIn = 96;
+const standardPanelCenterToCenterIn = 72;
 const ld72PanelPicketCount = 15;
 const standardPanelHeightIn = 72;
 const ld72PanelPicketCutLengthIn = 61;
@@ -405,17 +407,36 @@ export default function Home() {
 
   const panelTakeoff = useMemo(() => {
     const safeRunFt = noPanels ? 0 : Math.max(0, cleanNumber(panelRunFt));
+    const maxPanelCenterToCenterFt = maxPanelCenterToCenterIn / 12;
     const panelCount =
-      safeRunFt > 0 ? Math.max(1, Math.ceil(safeRunFt / nominalPanelWidthFt)) : 0;
+      safeRunFt > 0
+        ? Math.max(1, Math.ceil(safeRunFt / maxPanelCenterToCenterFt))
+        : 0;
     const fullPanelCount = panelCount > 0 ? 1 : 0;
     const tabbedPanelCount = Math.max(0, panelCount - fullPanelCount);
     const safeOpeningFt = panelCount > 0 ? safeRunFt / panelCount : 0;
+    const centerToCenterIn = safeOpeningFt * 12;
+    const panelLayoutWarning =
+      panelCount > 0 &&
+      (centerToCenterIn < minPanelCenterToCenterIn ||
+        centerToCenterIn > maxPanelCenterToCenterIn)
+        ? `Panel split is ${centerToCenterIn.toFixed(1)} in. center-to-center; LD-72 panels should be ${minPanelCenterToCenterIn}-${maxPanelCenterToCenterIn} in. center-to-center.`
+        : "";
     const safeHeightFt = Math.max(1, cleanNumber(panelHeightFt));
     const wasteFactor = 1 + Math.max(0, cleanNumber(wastePct)) / 100;
     const postCount = fullPanelCount * 2 + tabbedPanelCount;
     const postLf = postCount * safeHeightFt;
     const railLf = panelCount * safeOpeningFt * 2;
-    const picketCountPerPanel = panelCount > 0 ? ld72PanelPicketCount : 0;
+    const picketCountPerPanel =
+      panelCount > 0
+        ? Math.max(
+            2,
+            Math.round(
+              (centerToCenterIn / standardPanelCenterToCenterIn) *
+                ld72PanelPicketCount,
+            ),
+          )
+        : 0;
     const picketCutLengthFt = Math.max(
       1,
       (safeHeightFt * 12 -
@@ -428,6 +449,8 @@ export default function Home() {
       safeQty: panelCount,
       safeRunFt,
       safeOpeningFt,
+      centerToCenterIn,
+      panelLayoutWarning,
       safeHeightFt,
       panelType,
       fullPanelCount,
@@ -562,6 +585,7 @@ export default function Home() {
     hasGateMaterials && assemblyType === "single" && takeoff.safeOpeningFt * 12 > 48
       ? "Single swing openings over 48 in. should be reviewed before quoting."
       : "",
+    panelTakeoff.panelLayoutWarning,
   ].filter(Boolean);
 
   function updatePrice(id: string, price: number) {
@@ -919,7 +943,7 @@ export default function Home() {
               </label>
               <div className="input-pair">
                 <label>
-                  <span>Panel run</span>
+                  <span>Total panel run</span>
                   <div className="input-row">
                     <input
                       min="0"
@@ -930,6 +954,11 @@ export default function Home() {
                     />
                     <span>ft</span>
                   </div>
+                  <small className="field-note">
+                    Breaks into equal panel bays between{" "}
+                    {minPanelCenterToCenterIn}&quot; and{" "}
+                    {maxPanelCenterToCenterIn}&quot; center-to-center.
+                  </small>
                 </label>
                 <label>
                   <span>Panel height</span>
@@ -1065,6 +1094,14 @@ export default function Home() {
                 <small>
                   {panelTakeoff.safeRunFt.toFixed(1)} ft run /{" "}
                   {panelTakeoff.safeOpeningFt.toFixed(2)} ft each
+                </small>
+              </div>
+              <div>
+                <span>Center-to-center</span>
+                <strong>{panelTakeoff.centerToCenterIn.toFixed(1)}&quot;</strong>
+                <small>
+                  min {minPanelCenterToCenterIn}&quot; / max{" "}
+                  {maxPanelCenterToCenterIn}&quot;
                 </small>
               </div>
               <div>
